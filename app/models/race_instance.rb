@@ -35,7 +35,15 @@ class RaceInstance < ActiveRecord::Base
   
   def category_winner(category)
     category = RaceCategory.find_by_name(category) unless category.is_a? RaceCategory
-    performances.in_category(category).first.race_competitor if categories.include?(category)
+    performances.eligible_for_category(category).first.race_competitor if categories.include?(category)
+  end
+  
+  def competitor_in_position(position)
+    
+  end
+  
+  def competitor_in_category_position(category, position)
+
   end
   
 end

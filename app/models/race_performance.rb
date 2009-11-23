@@ -38,6 +38,12 @@ class RacePerformance < ActiveRecord::Base
     }
   }
 
+  named_scope :eligible_for_category, lambda {|category|
+    {
+      :conditions => ['race_category_id in (?)', RaceCategory.within(category).map(&:id).join(',')]
+    }
+  }
+
   named_scope :in_club, lambda {|club|
     {
       :conditions => ["(race_club_id = :club) or (race_club_id IS NULL AND race_competitors.race_club_id = :club)", {:club => club.id}]
