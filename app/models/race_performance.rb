@@ -10,22 +10,36 @@ class RacePerformance < ActiveRecord::Base
   has_many :checkpoint_times, :class_name => 'RaceCheckpointTime'
   
   before_validation_on_create :times_from_checkpoints
-  validates_presence_of :competitor, :race_instance
+  validates_presence_of :race_competitor_id, :race_instance_id
   
   named_scope :in, lambda {|race_instance|
-    :conditions => ['race_instance_id = ?', race_instance.id]
+    {
+      :conditions => ['race_instance_id = ?', race_instance.id]
+    }
   }
   
   named_scope :in_race, lambda {|race|
-    :conditions => ['race_instance_id in (?)', race.instances.map(&:id).join(',')]
+    {
+      :conditions => ['race_instance_id in (?)', race.instances.map(&:id).join(',')]
+    }
   }
 
   named_scope :in_category, lambda {|category|
-    :conditions => ['race_category_id = ?', category.id]
+    {
+      :conditions => ['race_category_id = ?', category.id]
+    }
   }
 
   named_scope :in_club, lambda {|club|
-    :conditions => ["(race_club_id = :club) or (race_club_id IS NULL AND race_competitors.race_club_id = :club)", {:club => club.id}]
+    {
+      :conditions => ["(race_club_id = :club) or (race_club_id IS NULL AND race_competitors.race_club_id = :club)", {:club => club.id}]
+    }
+  }
+
+  named_scope :quicker_than, lambda { |time|
+    {
+      :conditions => ["elapsed_time < ?", time]
+    }
   }
 
   named_scope :completed, {
@@ -35,17 +49,13 @@ class RacePerformance < ActiveRecord::Base
   named_scope :incomplete, {
     :conditions => 'status_id < 100'
   }
-  
-  named_scope :quicker_than, lambda { |time| 
-    :conditions => ["duration < ?", time]
-  }
 
   def start
     started_at || race_instance.started_at || checkpoint_times.first.time
   end
 
   def finish
-    finished_at || start + duration
+    finished_at || start + elapsed_time
   end
 
   def position
@@ -55,8 +65,8 @@ class RacePerformance < ActiveRecord::Base
 protected
 
   def times_from_checkpoints
-    self.started_at ||= checkpoint_times.first.duration
-    self.finished_at ||= checkpoint_times.last.duration
+    self.started_at ||= checkpoint_times.first.elapsed_time if checkpoint_times.any? && !race_instance.started_at
+    self.finished_at ||= checkpoint_times.last.elapsed_time if checkpoint_times.any? && !elapsed_time
   end
   
 end

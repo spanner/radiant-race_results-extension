@@ -8,7 +8,9 @@ class RaceCheckpoint < ActiveRecord::Base
   default_scope :order => :pos
 
   named_scope :in, lambda {|race|
-    :conditions => ['race_id = ?', race.id]
+    {
+      :conditions => ['race_id = ?', race.id]
+    }
   }
 
   def previous

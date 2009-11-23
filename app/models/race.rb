@@ -5,13 +5,17 @@ class Race < ActiveRecord::Base
   belongs_to :updated_by, :class_name => 'User'
   has_many :instances, :class_name => 'RaceInstance'
 
-  validates_presence_of :title, :slug
-  validates_uniqueness_of :title, :slug
+  validates_presence_of :name, :slug
+  validates_uniqueness_of :name, :slug
   validates_length_of :slug, :maximum => 100, :message => '{{count}}-character limit'
-  validates_format_of :slug, :with => %r{^([-_.A-Za-z0-9]*|/)$}, :message => 'not URL-friendly'
+  validates_format_of :slug, :with => %r{^([-_.A-Za-z0-9]*|)$}, :message => 'not URL-friendly'
 
   def latest
-    instances.last
+    instances.first   # they sort by start time desc
+  end
+
+  def in(name)
+    instances.find_by_name(name)
   end
 
 end

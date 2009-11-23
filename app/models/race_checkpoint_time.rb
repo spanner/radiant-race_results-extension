@@ -5,12 +5,13 @@ class RaceCheckpointTime < ActiveRecord::Base
   belongs_to :updated_by, :class_name => 'User'
   belongs_to :performance, :class_name => 'RacePerformance'
   belongs_to :checkpoint, :class_name => 'RaceCheckpoint'
-  delegate :race_instance, :performance
+
+  delegate :race_instance, :category, :competitor, :club, :to => :performance
   
   named_scope :at, lambda {|checkpoint|
     {
-      :conditions => ["race_checkpoint_id = ?", checkpoint.id] if checkpoint
-    }
+      :conditions => ["race_checkpoint_id = ?", checkpoint.id]
+    } if checkpoint
   }
 
   named_scope :in, lambda {|instance|
