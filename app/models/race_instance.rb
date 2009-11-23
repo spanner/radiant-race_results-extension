@@ -31,7 +31,7 @@ class RaceInstance < ActiveRecord::Base
     performances.first.race_competitor
   end
   
-  # this will need to changed to understand the category hierarchy
+  # this doesn't understand the category hierarchy yet
   
   def category_winner(category)
     category = RaceCategory.find_by_name(category) unless category.is_a? RaceCategory

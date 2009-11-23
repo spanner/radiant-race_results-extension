@@ -20,9 +20,12 @@ class RacesDataset < Dataset::Base
       create_competitor "William Ross"
     end
 
-    create_category 'M'
-    create_category 'MV40'
-    create_category 'LV70'
+    create_category 'M', :age_above => 0, :age_below => nil, :gender => 'M'
+    create_category 'MV40', :age_above => 40, :age_below => nil, :gender => 'M'
+    create_category 'MV50', :age_above => 50, :age_below => nil, :gender => 'M'
+    create_category 'MV60', :age_above => 60, :age_below => nil, :gender => 'M'
+    create_category 'LV70', :age_above => 70, :age_below => nil, :gender => 'F'
+    create_category 'U21', :age_above => nil, :age_below => 21, :gender => nil
 
     create_race "Caw" do
       create_instance "2008", :started_at => DateTime.civil(2008, 5, 7, 19, 30, 0)
@@ -122,9 +125,10 @@ class RacesDataset < Dataset::Base
       end
     end
 
-    def create_category(name)
+    def create_category(name, attributes={})
       symbol = name.symbolize
-      category = create_model :race_category, symbol, :name => name
+      attributes[:name] ||= name
+      category = create_model :race_category, symbol, attributes
     end
     
     def include_category(name, attributes={})
