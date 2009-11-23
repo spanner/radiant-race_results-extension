@@ -4,20 +4,28 @@ class RacePerformance < ActiveRecord::Base
   belongs_to :created_by, :class_name => 'User'
   belongs_to :updated_by, :class_name => 'User'
   belongs_to :race_instance, :class_name => 'RaceInstance'
-  belongs_to :competitor, :class_name => 'RaceCompetitor'
+  belongs_to :race_competitor
   belongs_to :category, :class_name => 'RaceCategory'
   belongs_to :club, :class_name => 'RaceClub'
   has_many :checkpoint_times, :class_name => 'RaceCheckpointTime'
   
   before_validation_on_create :times_from_checkpoints
   validates_presence_of :race_competitor_id, :race_instance_id
+
+  default_scope :order => 'elapsed_time DESC'
+
+  named_scope :by, lambda {|race_competitor|
+    {
+      :conditions => ['race_competitor_id = ?', race_competitor.id]
+    }
+  }
   
   named_scope :in, lambda {|race_instance|
     {
       :conditions => ['race_instance_id = ?', race_instance.id]
     }
   }
-  
+
   named_scope :in_race, lambda {|race|
     {
       :conditions => ['race_instance_id in (?)', race.instances.map(&:id).join(',')]
@@ -36,9 +44,9 @@ class RacePerformance < ActiveRecord::Base
     }
   }
 
-  named_scope :quicker_than, lambda { |time|
+  named_scope :quicker_than, lambda { |seconds|
     {
-      :conditions => ["elapsed_time < ?", time]
+      :conditions => ["elapsed_time < ?", seconds]
     }
   }
 
@@ -62,11 +70,26 @@ class RacePerformance < ActiveRecord::Base
     race_instance.performances.quicker_than(time).count + 1
   end
   
+  def elapsed_time
+    read_attribute(:elapsed_time).to_timecode
+  end
+  
+  def elapsed_time=(time)
+    write_attribute(:elapsed_time, time.seconds)    # numbers will pass through unchanged. strings will be timecode-parsed
+  end
+  
 protected
+
+  def parse_time(timestring)
+    tokens = timestring.split(/\D/).reverse
+    
+    
+  end
 
   def times_from_checkpoints
     self.started_at ||= checkpoint_times.first.elapsed_time if checkpoint_times.any? && !race_instance.started_at
     self.finished_at ||= checkpoint_times.last.elapsed_time if checkpoint_times.any? && !elapsed_time
+    self.elapsed_time ||= finished_at - started_at
   end
   
 end

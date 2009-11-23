@@ -98,7 +98,7 @@ class RaceData < ActiveRecord::Migration
       t.column :race_club_id,       :integer
       t.column :dibber,             :string
       t.column :started_at,         :datetime
-      t.column :elapsed_time,       :time
+      t.column :elapsed_time,       :integer
       t.column :finished_at,        :datetime
       t.column :created_by_id,      :integer
       t.column :updated_by_id,      :integer
@@ -112,7 +112,7 @@ class RaceData < ActiveRecord::Migration
     create_table :race_checkpoint_times do |t|
       t.column :race_performance_id,:integer
       t.column :race_checkpoint_id, :integer
-      t.column :elapsed_time,       :time
+      t.column :elapsed_time,       :integer
       t.column :created_by_id,      :integer
       t.column :updated_by_id,      :integer
       t.column :created_at,         :datetime

@@ -22,12 +22,13 @@ class RacesDataset < Dataset::Base
 
     create_category 'M'
     create_category 'MV40'
+    create_category 'LV70'
 
     create_race "Caw" do
       create_instance "2008", :started_at => DateTime.civil(2008, 5, 7, 19, 30, 0)
       create_instance "2009", :started_at => DateTime.civil(2009, 5, 6, 19, 30, 0) do
-        include_category 'M'
-        include_category 'MV40'
+        include_category 'M', :prizes => 3, :team_prizes => 1
+        include_category 'MV40', :prizes => 3, :team_prizes => 1
         create_performance :race_competitor_id => race_competitor_id(:ben_abdelnoor), :elapsed_time => '50:40', :race_category_id => race_category_id(:m)
         create_performance :race_competitor_id => race_competitor_id(:mike_robinson), :elapsed_time => '52:50', :race_category_id => race_category_id(:m)
         create_performance :race_competitor_id => race_competitor_id(:chris_robinson), :elapsed_time => '53:34', :race_category_id => race_category_id(:m)
@@ -37,8 +38,8 @@ class RacesDataset < Dataset::Base
     end
     create_race "Dunnerdale" do
       create_instance "2007", :started_at => DateTime.civil(2009, 11, 14, 12, 0, 0) do
-        include_category 'M'
-        include_category 'MV40'
+        include_category 'M', :prizes => 3, :team_prizes => 1
+        include_category 'MV40', :prizes => 3, :team_prizes => 1
         create_checkpoint "Knott"
         create_checkpoint "Raven Crag"
         create_checkpoint "Stickle Pike"

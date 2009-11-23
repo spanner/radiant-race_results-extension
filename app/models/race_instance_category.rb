@@ -4,7 +4,7 @@ class RaceInstanceCategory < ActiveRecord::Base
   belongs_to :updated_by, :class_name => 'User'
 
   belongs_to :race_instance
-  belongs_to :category, :class_name => 'RaceCategory'
+  belongs_to :race_category
 
   has_many :performances, :class_name => 'RacePerformance'
 end

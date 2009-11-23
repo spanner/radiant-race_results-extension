@@ -24,10 +24,35 @@ describe RaceInstance do
     end
   end
 
+  describe "A simple race" do
+    before do
+      @ri = races(:caw).in(2009)
+    end
+    
+    it "should have race categories" do
+      @ri.categories.any?.should be_true
+      @ri.categories.include?(race_categories(:m)).should be_true
+      @ri.categories.include?(race_categories(:mv40)).should be_true
+      @ri.categories.include?(race_categories(:lv70)).should be_false
+    end
 
+    it "should have performances" do
+      @ri.performances.any?.should be_true
+    end
 
+    it "should have competitors" do
+      @ri.competitors.any?.should be_true
+    end
 
+    it "should have a winner" do
+      @ri.winner.should == race_competitors(:ben_abdelnoor)
+    end
 
+    it "should have a category winner" do
+      @ri.category_winner('MV40').should == race_competitors(:gary_thorpe)
+    end
+
+  end
 
     
 end

@@ -4,8 +4,11 @@ class RaceInstance < ActiveRecord::Base
   belongs_to :created_by, :class_name => 'User'
   belongs_to :updated_by, :class_name => 'User'
   belongs_to :race
-  has_many :performances, :class_name => 'RacePerformance'
   has_many :checkpoints, :class_name => 'RaceCheckpoint'
+  has_many :race_instance_categories
+  has_many :categories, :through => :race_instance_categories, :source => :race_category
+  has_many :performances, :class_name => 'RacePerformance'
+  has_many :competitors, :through => :performances, :source => :race_competitor
 
   default_scope :order => 'started_at DESC'
   
@@ -22,6 +25,17 @@ class RaceInstance < ActiveRecord::Base
 
   def checkpoint_after(cp)
     checkpoints.at(checkpoints.index(cp) + 1) if checkpoints.contain?(cp) and checkpoints.last != cp
+  end
+  
+  def winner
+    performances.first.race_competitor
+  end
+  
+  # this will need to changed to understand the category hierarchy
+  
+  def category_winner(category)
+    category = RaceCategory.find_by_name(category) unless category.is_a? RaceCategory
+    performances.in_category(category).first.race_competitor if categories.include?(category)
   end
   
 end
