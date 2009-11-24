@@ -82,6 +82,7 @@ class RaceData < ActiveRecord::Migration
       t.column :race_category_id,   :integer
       t.column :prizes,             :integer
       t.column :team_prizes,        :integer
+      t.column :record,             :integer
       t.column :created_by_id,      :integer
       t.column :updated_by_id,      :integer
       t.column :created_at,         :datetime
@@ -91,7 +92,7 @@ class RaceData < ActiveRecord::Migration
     add_index :race_instance_categories, [:race_instance_id, :race_category_id]
     
     create_table :race_performances do |t|
-      t.column :name,               :string
+      t.column :number,             :integer
       t.column :race_instance_id,   :integer
       t.column :race_competitor_id, :integer
       t.column :race_category_id,   :integer

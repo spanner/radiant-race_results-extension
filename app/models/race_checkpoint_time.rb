@@ -46,7 +46,7 @@ class RaceCheckpointTime < ActiveRecord::Base
   end
   
   def gain
-    position - previous_position
+    sprintf('+%d', position - previous_position)
   end
 
 end

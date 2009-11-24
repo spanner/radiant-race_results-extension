@@ -26,6 +26,8 @@ class RaceResultsExtension < Radiant::Extension
   def activate
     require 'duration_extensions'
     
+    Page.send :include, RaceResults::Tags
+    
     admin.tabs.add "Races", "/admin/races", :after => "Layouts", :visibility => [:all]
     admin.tabs['Races'].add_link('races', '/admin/races')
     admin.tabs['Races'].add_link('checkpoints', '/admin/races/race_checkpoints')

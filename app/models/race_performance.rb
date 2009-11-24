@@ -8,11 +8,20 @@ class RacePerformance < ActiveRecord::Base
   belongs_to :category, :class_name => 'RaceCategory'
   belongs_to :club, :class_name => 'RaceClub'
   has_many :checkpoint_times, :class_name => 'RaceCheckpointTime'
+
+  delegate :name, :reader, :to => :race_competitor
   
   before_validation_on_create :times_from_checkpoints
   validates_presence_of :race_competitor_id, :race_instance_id
 
   default_scope :order => 'elapsed_time DESC'
+
+  named_scope :top, lambda {|count|
+    {
+      :order => 'elapsed_time DESC',
+      :limit => count
+    }
+  }
 
   named_scope :by, lambda {|race_competitor|
     {
@@ -83,14 +92,8 @@ class RacePerformance < ActiveRecord::Base
   def elapsed_time=(time)
     write_attribute(:elapsed_time, time.seconds)    # numbers will pass through unchanged. strings will be timecode-parsed
   end
-  
-protected
 
-  def parse_time(timestring)
-    tokens = timestring.split(/\D/).reverse
-    
-    
-  end
+protected
 
   def times_from_checkpoints
     self.started_at ||= checkpoint_times.first.elapsed_time if checkpoint_times.any? && !race_instance.started_at

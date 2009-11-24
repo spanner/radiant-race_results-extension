@@ -5,7 +5,7 @@ class RaceInstanceCategory < ActiveRecord::Base
 
   belongs_to :race_instance
   belongs_to :race_category
-
   has_many :performances, :class_name => 'RacePerformance'
+
 end
 

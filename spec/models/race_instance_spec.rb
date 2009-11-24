@@ -9,10 +9,10 @@ describe RaceInstance do
       @ri.should be_valid
     end
     
-    it "should require a name" do
-      @ri.name = nil
+    it "should require a slug" do
+      @ri.slug = nil
       @ri.should_not be_valid
-      @ri.errors.on(:name).should_not be_empty
+      @ri.errors.on(:slug).should_not be_empty
     end
     
     ["", "with a space", "/", "../../../hm", "2008"]. each do |badslug|
@@ -42,6 +42,7 @@ describe RaceInstance do
 
     it "should have competitors" do
       @ri.competitors.any?.should be_true
+      @ri.competitors.count.should == 5
     end
 
     it "should have a winner" do
@@ -49,7 +50,7 @@ describe RaceInstance do
     end
 
     it "should have a category winner" do
-      @ri.category_winner('MV40').should == race_competitors(:gary_thorpe)
+      @ri.winner('MV40').should == race_competitors(:gary_thorpe)
     end
 
   end

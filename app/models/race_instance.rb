@@ -19,6 +19,10 @@ class RaceInstance < ActiveRecord::Base
   
   # on creation, checkpoints will need to copy from latest instance in an overridable way
   
+  def name
+    "#{race.name}: #{slug}"
+  end
+  
   def checkpoint_before(cp)
     checkpoints.at(checkpoints.index(cp) - 1) if checkpoints.contain?(cp) and checkpoints.first != cp
   end
@@ -27,24 +31,33 @@ class RaceInstance < ActiveRecord::Base
     checkpoints.at(checkpoints.index(cp) + 1) if checkpoints.contain?(cp) and checkpoints.last != cp
   end
   
-  def winner
-    performances.first.race_competitor
-  end
-  
-  # this doesn't understand the category hierarchy yet
-  
-  def category_winner(category)
-    category = RaceCategory.find_by_name(category) unless category.is_a? RaceCategory
-    performances.eligible_for_category(category).first.race_competitor if categories.include?(category)
-  end
-  
-  def competitor_in_position(position)
+  def performance_by(competitor)
     
   end
   
-  def competitor_in_category_position(category, position)
-
+  def performance_at(position)
+    
   end
   
+  def winning_performance(category=nil)
+    if category
+      category = RaceCategory.find_by_name(category) unless category.is_a? RaceCategory
+      performances.eligible_for_category(category).first if categories.include?(category)
+    else
+      performances.first
+    end
+  end
+  
+  def winner(category=nil)
+    winning_performance(category).race_competitor
+  end
+    
+  def top(count=20)
+    performances.top(count)
+  end
+  
+  def category_top(count=5)
+    performances.eligible_for_category(category).top(count)
+  end
 end
 
