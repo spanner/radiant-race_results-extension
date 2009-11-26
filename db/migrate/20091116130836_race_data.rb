@@ -16,6 +16,9 @@ class RaceData < ActiveRecord::Migration
       t.column :race_id,            :integer
       t.column :name,               :string
       t.column :slug,               :string
+      t.column :results_file_name,  :string
+      t.column :results_content_type,  :string
+      t.column :results_file_size,  :integer
       t.column :started_at,         :datetime
       t.column :created_by_id,      :integer
       t.column :updated_by_id,      :integer

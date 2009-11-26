@@ -1,5 +1,7 @@
+require 'csv'
+
 class RaceInstance < ActiveRecord::Base
-  
+
   has_site if respond_to? :has_site
   belongs_to :created_by, :class_name => 'User'
   belongs_to :updated_by, :class_name => 'User'
@@ -10,15 +12,16 @@ class RaceInstance < ActiveRecord::Base
   has_many :performances, :class_name => 'RacePerformance'
   has_many :competitors, :through => :performances, :source => :race_competitor
 
+  has_attached_file :results  
+  after_save :process_results_file
+
   default_scope :order => 'started_at DESC'
-  
+
   validates_presence_of :name, :slug, :started_at, :race
   validates_uniqueness_of :slug, :scope => :race_id
   validates_length_of :slug, :maximum => 100, :message => '{{count}}-character limit'
   validates_format_of :slug, :with => %r{^([-_.A-Za-z0-9]*|)$}, :message => 'not URL-friendly'
-  
-  # on creation, checkpoints will need to copy from latest instance in an overridable way
-  
+
   def name
     "#{race.name}: #{slug}"
   end
@@ -59,5 +62,24 @@ class RaceInstance < ActiveRecord::Base
   def category_top(count=5)
     performances.eligible_for_category(category).top(count)
   end
+  
+protected
+
+  def process_results_file
+    # need better flagging of new results: use dirty and process while saving?
+    if (results && results.path)
+      csv_data = CSV.read(results.path)
+      headers = csv_data.shift.map {|i| i.to_s }
+      race_data = csv_data.map {|row| row.map {|cell| cell.to_s } }.map {|row| Hash[*headers.zip(row).flatten] } # build AoA and then hash the second level
+    
+      RaceInstance.transaction do
+        performances.destroy_all
+        race_data.each do |result|
+        
+        end
+      end
+    end
+  end
+
 end
 

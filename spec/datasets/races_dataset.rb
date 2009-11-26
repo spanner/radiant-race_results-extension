@@ -18,6 +18,8 @@ class RacesDataset < Dataset::Base
     create_club "Black Combe" do
       create_competitor "Pete Tayler"
       create_competitor "William Ross"
+      create_club_alias "BCR"
+      create_club_alias "Black Combe Runners"
     end
 
     create_category 'M', :age_above => 0, :age_below => nil, :gender => 'M'
@@ -93,6 +95,13 @@ class RacesDataset < Dataset::Base
       attributes[:name] = name
       attributes[:race_club_id] ||= @race_club_id
       competitor = create_model :race_competitor, symbol, attributes
+    end
+
+    def create_club_alias(name, attributes={})
+      symbol = name.symbolize
+      attributes[:name] = name
+      attributes[:race_club_id] ||= @race_club_id
+      club_alias = create_model :race_club_alias, symbol, attributes
     end
 
     def create_race(name, attributes={})
