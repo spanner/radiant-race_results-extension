@@ -35,33 +35,3 @@
     %p.upload
       %label.upload Choose a file to upload
       = f.file_field :results, :class => "", :style => "width: 100%"
-
-  - form.edit_checkpoints do
-    %h3
-      Checkpoints
-      
-    %p.decision
-      - if @race_instance.checkpoints.any?
-        = radio_button_tag :get_checkpoints, 'keep', true, :id => 'keep_checkpoints'
-        %label{:for => 'keep_checkpoints'} Use existing set
-        %span.form_note 
-          - @race_instance.checkpoints.map(&:name).to_sentence
-        %br
-      
-      - previous_instance = @race.latest
-      = radio_button_tag :get_checkpoints, 'previous', !@race_instance.checkpoints.any? && !previous_instance.nil?, :id => 'previous_checkpoints', :disabled => !previous_instance.nil?
-      %label{:for => 'previous_checkpoints', :class => previous_instance.nil? ? 'disabled' : ''} 
-        Same as the 
-        - if previous_instance
-          = link_to previous_instance.name, admin_edit_race_instance_url(previous_instance)
-        - else
-          last
-        set
-      %br
-      = radio_button_tag :get_checkpoints, 'file', false, :id => 'file_checkpoints'
-      %label{:for => 'previous_checkpoints'} In the file
-      %span.form_note (make sure header line has checkpoint names)
-      %br
-      = radio_button_tag :get_checkpoints, 'no', false, :id => 'no_checkpoints'
-      %label{:for => 'no_checkpoints'} No checkpoints
-      %span.form_note (just a finish time)
