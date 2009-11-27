@@ -69,6 +69,7 @@ describe RaceInstance do
     
     it "should get performances" do
       @ri.performances.any?.should be_true
+      p @ri.performances.inspect
     end
     
     # it "should get competitors" do
