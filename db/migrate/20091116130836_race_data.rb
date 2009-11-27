@@ -103,6 +103,7 @@ class RaceData < ActiveRecord::Migration
       t.column :dibber,             :string
       t.column :started_at,         :datetime
       t.column :elapsed_time,       :integer
+      t.column :score,              :integer
       t.column :finished_at,        :datetime
       t.column :created_by_id,      :integer
       t.column :updated_by_id,      :integer

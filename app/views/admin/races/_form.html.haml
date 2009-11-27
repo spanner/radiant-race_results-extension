@@ -1,0 +1,32 @@
+= render_region :form_top
+
+- if @race.errors.any?
+  %p.haserror
+    Sorry: there were problems:
+    %br
+    = @race.errors.full_messages
+
+- render_region :form do |form|
+  - form.edit_title do
+    %p.title
+      = f.label :name, "Race Name"
+      = f.text_field :name, :class => 'textbox', :maxlength => 100 
+
+  - form.edit_metadata do
+    #extended-metadata{ :class => "row", :style => "display: none" }
+      %table.fieldset{ :cellpadding => "0", :cellspacing => "0", :border => "0" }
+        %tr
+          %td.label
+            = f.label :slug, 'Slug'
+          %td.field
+            = f.text_field :slug, :class => 'textbox', :maxlength => 255 
+        = render_region :extended_metadata
+    %p
+      %small
+        %a{ :id => "more-extended-metadata", :href => "#", :onclick => "#{toggle_javascript_for('extended-metadata')}; return false;" } More
+        %a{ :id => "less-extended-metadata", :href => "#", :onclick => "#{toggle_javascript_for('extended-metadata')}; return false;", :style => "display: none" } Less
+
+  - form.edit_description do
+    %p.title
+      = f.label :name, "Race Description"
+      = f.text_area "description", :size => '40x8', :class => "textarea" 

@@ -1,0 +1,19 @@
+- include_stylesheet 'admin/races' 
+= render_region :top 
+
+- render_region :main do |main|
+  - main.edit_header do
+    %h1= "New Race"
+    %p 
+      All you need to do here is name and describe the race. The real work is done when you add one or more sets of results.
+
+  - main.edit_form do  
+    - form_for :race, :url => admin_races_path, :html => { :method => "post", :multipart => true } do |f|
+      .form-area
+        = render :partial => "form", :locals => { :f => f }
+
+        %p.buttons
+          = save_model_button(@race)
+          = save_model_and_continue_editing_button(@race)
+          or
+          = link_to "Cancel", admin_races_path

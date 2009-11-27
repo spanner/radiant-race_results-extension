@@ -13,6 +13,7 @@ class RaceInstance < ActiveRecord::Base
   has_many :competitors, :through => :performances, :source => :race_competitor
 
   has_attached_file :results  
+  attr_accessor :results_updated
   after_save :process_results_file
 
   default_scope :order => 'started_at DESC'
@@ -64,21 +65,55 @@ class RaceInstance < ActiveRecord::Base
   end
   
 protected
-
+  
   def process_results_file
-    # need better flagging of new results: use dirty and process while saving?
-    if (results && results.path)
-      csv_data = CSV.read(results.path)
-      headers = csv_data.shift.map {|i| i.to_s }
+    if (results_updated && results && results.path)
+      csv_data = read_results_file
+      headers = csv_data.shift.map(&:to_s)
       race_data = csv_data.map {|row| row.map {|cell| cell.to_s } }.map {|row| Hash[*headers.zip(row).flatten] } # build AoA and then hash the second level
     
       RaceInstance.transaction do
         performances.destroy_all
-        race_data.each do |result|
-        
+        race_data.each do |line|
+          runner = normalize_fields(line)
+          club = RaceClub.find_or_create_by_name_or_alias(runner.delete('club'))
+          competitor = RaceCompetitor.find_or_create_by_name_and_club_id(runner.delete('name'), club.id)
+          category = RaceCategory.find_or_create_by_normalized_name(runner.delete('category'))
+          self.performances.create!({
+            :club => club, 
+            :competitor => competitor, 
+            :category => category,
+            :elapsed_time => runner.delete('elapsed_time')
+          })
+          runner.keys.each do |key|
+            if runner[key].match(/^[\d\:]+$/)
+              checkpoint = checkpoints.find_or_create_by_name(key)
+              performance.checkpoint_times.create!(:checkpoint_id => checkpoint.id, :elapsed_time => runner[key])
+            end
+          end
         end
       end
     end
+  end
+
+  def read_results_file
+    CSV.read(results.path)
+  end
+  
+  @@field_aliases = {
+    'cat' => 'category',
+    'time' => 'elapsed_time',
+    'finish' => 'elapsed_time',
+    'pos' => 'position'
+  }
+  
+  def normalize_fields(line)
+    line.keys.each do |key|
+      clean_key = key.gsub(/\s+/, "_").downcase
+      clean_key = @@field_aliases[clean_key] if @@field_aliases[clean_key]
+      line[clean_key] = line.delete(key)
+    end
+    line
   end
 
 end

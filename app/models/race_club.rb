@@ -17,11 +17,13 @@ class RaceClub < ActiveRecord::Base
     }
   }
   def self.find_by_name_or_alias(name)
+    name.gsub(/_/, ' ')
     clubs = self.by_name_or_alias(name)
     clubs.first if clubs.any?
   end
 
   def self.find_or_create_by_name_or_alias(name)
+    name.gsub(/_/, ' ')
     find_by_name_or_alias(name) || self.create(:name => name)
   end
 

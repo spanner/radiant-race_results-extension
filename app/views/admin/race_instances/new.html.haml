@@ -1,0 +1,20 @@
+- include_stylesheet 'admin/races' 
+= render_region :top 
+
+- render_region :main do |main|
+  - main.edit_header do
+    %h1= "Upload Race Results"
+    
+    %p
+      For a simple race, all you need to do here is give it a short name and upload a results file: we'll work out the competitors and categories from the results. 
+
+  - main.edit_form do  
+    - form_for :race_instance, :url => admin_race_race_instances_path, :html => { :method => "post", :multipart => true } do |f|
+      .form-area
+        = render :partial => "form", :locals => { :f => f }
+
+        %p.buttons
+          = save_model_button(@race_instance)
+          = save_model_and_continue_editing_button(@race_instance)
+          or
+          = link_to "Cancel", admin_race_instances_path

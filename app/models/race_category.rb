@@ -23,6 +23,50 @@ class RaceCategory < ActiveRecord::Base
       :conditions => [conditions.join(' AND '), *bound]   # note that the results will always include the passed category
     }
   }
+  
+  def self.find_or_create_by_normalized_name(name)
+    name = normalized_name(name)
+    unless category = find_by_name(name)
+      category = new(:name => name)
+      if matches = name.match(/^([A-Z]+)(\d+)$/)
+        category.send(matches[1].match(/U/) ? :age_below= : :age_above=, matches[2])
+        category.gender = matches[1].match(/L/) ? "F" : "M"
+      end
+      category.save!
+    end
+    category
+  end
+  
+protected
+  
+  def self.normalized_name(name)
+    name.gsub!(/\s/, '')
+    name.upcase!
+    case name
+    when /M(\d\d)/
+      "MV#{$1}"
+    when /L(\d\d)/
+      "LV#{$1}"
+    when "F"
+      "L"
+    when /F(\d\d)/
+      "LV#{$1}"
+    when /FV(\d\d)/
+      "LV#{$1}"
+    when /FU(\d\d)/
+      "LU#{$1}"
+    when "W"
+      "L"
+    when /W(\d\d)/
+      "LV#{$1}"
+    when /WV(\d\d)/
+      "LV#{$1}"
+    when /WU(\d\d)/
+      "LU#{$1}"
+    else
+      name
+    end
+  end
 
 end
 
