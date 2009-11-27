@@ -26,12 +26,13 @@ class RaceData < ActiveRecord::Migration
       t.column :updated_at,         :datetime
       t.column :site_id,            :integer
     end
-    add_index :race_instances, [:slug, :site_id], :unique => true
+    add_index :race_instances, [:slug, :race_id], :unique => true
 
     # this ought to be suitable for score courses too
     
     create_table :race_checkpoints do |t|
       t.column :race_instance_id,   :integer
+      t.column :position,           :integer
       t.column :name,               :string
       t.column :value,              :integer
       t.column :location,           :string

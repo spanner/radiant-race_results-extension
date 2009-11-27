@@ -1,4 +1,5 @@
 require File.dirname(__FILE__) + '/../spec_helper'
+require 'csv'
 
 describe RaceInstance do
   dataset :races
@@ -52,8 +53,44 @@ describe RaceInstance do
     it "should have a category winner" do
       @ri.winner('MV40').should == race_competitors(:gary_thorpe)
     end
-
   end
 
+  describe "Importing results" do
+    before do
+      @race = Race.create(:name => "Long Duddon", :slug => 'long_duddon')
+      @ri = @race.instances.new({
+        :name => '2008', 
+        :slug => '2008'
+      })
+      @ri.should_receive(:read_results_file).and_return(CSV.read(File.dirname(__FILE__) + '/../files/long_duddon_2008.csv'))
+      @ri.results_updated = true
+      @ri.save!
+    end
     
+    it "should get performances" do
+      @ri.performances.any?.should be_true
+    end
+    
+    # it "should get competitors" do
+    #   @ri.competitors.any?.should be_true
+    # end
+    # 
+    # it "should get categories" do
+    #   @ri.categories.any?.should be_true
+    # end
+    # 
+    # it "should get checkpoints" do
+    #   @ri.checkpoints.any?.should be_true
+    # end
+    
+    
+    
+    
+    
+    
+    
+    
+    
+  end
+
 end

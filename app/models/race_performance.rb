@@ -96,9 +96,9 @@ class RacePerformance < ActiveRecord::Base
 protected
 
   def times_from_checkpoints
-    self.started_at ||= checkpoint_times.first.elapsed_time if checkpoint_times.any? && !race_instance.started_at
-    self.finished_at ||= checkpoint_times.last.elapsed_time if checkpoint_times.any? && !elapsed_time
-    self.elapsed_time ||= finished_at - started_at
+    # self.started_at ||= checkpoint_times.first.elapsed_time if checkpoint_times.any? && !race_instance.started_at
+    # self.finished_at ||= checkpoint_times.last.elapsed_time if checkpoint_times.any? && !elapsed_time
+    # self.elapsed_time ||= finished_at - started_at
   end
   
 end

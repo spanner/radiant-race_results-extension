@@ -18,7 +18,7 @@ class RaceInstance < ActiveRecord::Base
 
   default_scope :order => 'started_at DESC'
 
-  validates_presence_of :name, :slug, :started_at, :race
+  validates_presence_of :name, :slug, :race
   validates_uniqueness_of :slug, :scope => :race_id
   validates_length_of :slug, :maximum => 100, :message => '{{count}}-character limit'
   validates_format_of :slug, :with => %r{^([-_.A-Za-z0-9]*|)$}, :message => 'not URL-friendly'
@@ -67,29 +67,25 @@ class RaceInstance < ActiveRecord::Base
 protected
   
   def process_results_file
-    if (results_updated && results && results.path)
-      csv_data = read_results_file
+    if results_updated && csv_data = read_results_file
       headers = csv_data.shift.map(&:to_s)
       race_data = csv_data.map {|row| row.map {|cell| cell.to_s } }.map {|row| Hash[*headers.zip(row).flatten] } # build AoA and then hash the second level
-    
+  
       RaceInstance.transaction do
         performances.destroy_all
         race_data.each do |line|
           runner = normalize_fields(line)
           club = RaceClub.find_or_create_by_name_or_alias(runner.delete('club'))
-          competitor = RaceCompetitor.find_or_create_by_name_and_club_id(runner.delete('name'), club.id)
+          competitor = RaceCompetitor.find_or_create_by_name_and_race_club_id(runner.delete('name'), club.id)
           category = RaceCategory.find_or_create_by_normalized_name(runner.delete('category'))
-          self.performances.create!({
+          performance = self.performances.create!({
             :club => club, 
-            :competitor => competitor, 
+            :race_competitor => competitor,
             :category => category,
             :elapsed_time => runner.delete('elapsed_time')
           })
-          runner.keys.each do |key|
-            if runner[key].match(/^[\d\:]+$/)
-              checkpoint = checkpoints.find_or_create_by_name(key)
-              performance.checkpoint_times.create!(:checkpoint_id => checkpoint.id, :elapsed_time => runner[key])
-            end
+          runner.keys.select{|k| runner[k].match(/^[\d\:]+$/) }.each do |key|
+            performance.checkpoint_times.create!(:checkpoint => checkpoints.find_or_create_by_name(key), :elapsed_time => runner[key])
           end
         end
       end

@@ -5,7 +5,9 @@ class RaceCheckpoint < ActiveRecord::Base
   belongs_to :updated_by, :class_name => 'User'
   belongs_to :race_instance
   has_many :times, :class_name => 'RaceCheckpointTime'
-  default_scope :order => :pos
+
+  acts_as_list :scope => :race_instance_id
+  default_scope :order => :position
 
   named_scope :in, lambda {|race|
     {

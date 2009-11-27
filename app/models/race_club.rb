@@ -11,20 +11,25 @@ class RaceClub < ActiveRecord::Base
   named_scope :by_name_or_alias, lambda { |name|
     {
       :select => 'race_clubs.*',
-      :joins => "INNER JOIN race_club_aliases AS aliases ON aliases.race_club_id = race_clubs.id",
+      :joins => "LEFT JOIN race_club_aliases AS aliases ON aliases.race_club_id = race_clubs.id",
       :conditions => ["race_clubs.name = :name OR aliases.name = :name", {:name => name}],
-      :group => 'race_clubs.id'
+      :group => "race_clubs.id"
     }
   }
+  
   def self.find_by_name_or_alias(name)
-    name.gsub(/_/, ' ')
+    name.gsub!(/_/, ' ')
     clubs = self.by_name_or_alias(name)
-    clubs.first if clubs.any?
+    clubs.first
   end
 
   def self.find_or_create_by_name_or_alias(name)
-    name.gsub(/_/, ' ')
-    find_by_name_or_alias(name) || self.create(:name => name)
+    name.gsub!(/_/, ' ')
+    unless club = find_by_name_or_alias(name) 
+      club = new(:name => name)
+      club.save!
+    end
+    club
   end
 
 end
