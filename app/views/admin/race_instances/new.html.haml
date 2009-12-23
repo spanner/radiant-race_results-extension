@@ -1,4 +1,6 @@
-- include_stylesheet 'admin/races' 
+- include_stylesheet 'admin/races'
+- include_javascript 'admin/races'
+
 = render_region :top 
 
 - render_region :main do |main|
@@ -14,7 +16,6 @@
         = render :partial => "form", :locals => { :f => f }
 
         %p.buttons
-          = save_model_button(@race_instance)
-          = save_model_and_continue_editing_button(@race_instance)
+          %input{:type => "submit", :class => 'button', :value => "save race results"}
           or
-          = link_to "Cancel", admin_race_instances_path
+          = link_to "Cancel", admin_races_path

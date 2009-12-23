@@ -1,4 +1,6 @@
-- include_stylesheet 'admin/races' 
+- include_stylesheet 'admin/races'
+- include_javascript 'admin/races'
+
 = render_region :top 
 
 - render_region :main do |main|
@@ -8,12 +10,11 @@
       Uploading a new results file will completely replace the current list of competitors, categories and times.
 
   - main.edit_form do  
-    - form_for :race_instance, :url => admin_race_race_instances_path(@race), :html => { :method => "put", :multipart => true } do |f|
+    - form_for :race_instance, :url => admin_race_race_instance_path(@race, @race_instance), :html => { :method => "put", :multipart => true } do |f|
       .form-area
         = render :partial => "form", :locals => { :f => f }
 
         %p.buttons
-          = save_model_button(@race_instance)
-          = save_model_and_continue_editing_button(@race_instance)
+          %input{:type => "submit", :class => 'button', :value => "save race results"}
           or
-          = link_to "Cancel", admin_race_instances_path
+          = link_to "Cancel", admin_races_path

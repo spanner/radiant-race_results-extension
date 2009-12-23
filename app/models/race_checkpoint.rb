@@ -14,7 +14,7 @@ class RaceCheckpoint < ActiveRecord::Base
       :conditions => ['race_id = ?', race.id]
     }
   }
-
+  
   def previous
     race.checkpoint_before(self)
   end

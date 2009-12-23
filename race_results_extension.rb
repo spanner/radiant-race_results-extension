@@ -3,7 +3,7 @@
 
 class RaceResultsExtension < Radiant::Extension
   version "1.0"
-  description "Describe your extension here"
+  description "Makes easy the uploading, analysis and display of race results. Built for fell races but should work for most timed events."
   url "http://spanner.org/radiant/race_results"
   
   define_routes do |map|
@@ -24,7 +24,7 @@ class RaceResultsExtension < Radiant::Extension
   end
   
   extension_config do |config|
-    config.gem 'paperclip', :source => 'http://gemcutter.org'
+    # config.gem 'paperclip', :source => 'http://gemcutter.org'
     
     config.after_initialize do
       ActiveSupport::Inflector.inflections do |inflect|

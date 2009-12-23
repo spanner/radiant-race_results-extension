@@ -29,10 +29,4 @@ describe RaceClub do
       RaceClub.find_or_create_by_name_or_alias('CFR').should be_kind_of(RaceClub)
     end
   end
-  
-
-
-
-
-  
 end

@@ -32,36 +32,32 @@ class RacesDataset < Dataset::Base
     create_race "Caw" do
       create_instance "2008", :started_at => DateTime.civil(2008, 5, 7, 19, 30, 0)
       create_instance "2009", :started_at => DateTime.civil(2009, 5, 6, 19, 30, 0) do
-        include_category 'M', :prizes => 3, :team_prizes => 1
-        include_category 'MV40', :prizes => 3, :team_prizes => 1
-        create_performance :race_competitor_id => race_competitor_id(:ben_abdelnoor), :elapsed_time => '50:40', :race_category_id => race_category_id(:m)
-        create_performance :race_competitor_id => race_competitor_id(:mike_robinson), :elapsed_time => '52:50', :race_category_id => race_category_id(:m)
-        create_performance :race_competitor_id => race_competitor_id(:chris_robinson), :elapsed_time => '53:34', :race_category_id => race_category_id(:m)
-        create_performance :race_competitor_id => race_competitor_id(:tom_doyle), :elapsed_time => '54:34', :race_category_id => race_category_id(:m)
-        create_performance :race_competitor_id => race_competitor_id(:gary_thorpe), :elapsed_time => '55:45', :race_category_id => race_category_id(:mv40)
+        create_performance :race_competitor_id => race_competitor_id(:ben_abdelnoor), :elapsed_time => '50:40', :category => race_categories(:m)
+        create_performance :race_competitor_id => race_competitor_id(:mike_robinson), :elapsed_time => '52:50', :category => race_categories(:m)
+        create_performance :race_competitor_id => race_competitor_id(:chris_robinson), :elapsed_time => '53:34', :category => race_categories(:m)
+        create_performance :race_competitor_id => race_competitor_id(:tom_doyle), :elapsed_time => '54:34', :category => race_categories(:m)
+        create_performance :race_competitor_id => race_competitor_id(:gary_thorpe), :elapsed_time => '55:45', :category => race_categories(:mv40)
       end
     end
     create_race "Dunnerdale" do
       create_instance "2007", :started_at => DateTime.civil(2009, 11, 14, 12, 0, 0) do
-        include_category 'M', :prizes => 3, :team_prizes => 1
-        include_category 'MV40', :prizes => 3, :team_prizes => 1
         create_checkpoint "Knott"
         create_checkpoint "Raven Crag"
         create_checkpoint "Stickle Pike"
         create_checkpoint "Great Stickle"
-        create_performance :race_competitor_id => race_competitor_id(:ben_abdelnoor), :race_category_id => race_category_id(:m), :elapsed_time => '41:41' do
+        create_performance :race_competitor_id => race_competitor_id(:ben_abdelnoor), :category => race_categories(:m), :elapsed_time => '41:41' do
           create_checkpoint_time "9:12", :race_checkpoint_id => race_checkpoint_id(:knott)
           create_checkpoint_time "18:12", :race_checkpoint_id => race_checkpoint_id(:raven_crag)
           create_checkpoint_time "27:12", :race_checkpoint_id => race_checkpoint_id(:stickle_pike)
           create_checkpoint_time "35:12", :race_checkpoint_id => race_checkpoint_id(:great_stickle)
         end
-        create_performance :race_competitor_id => race_competitor_id(:pete_tayler), :race_category_id => race_category_id(:mv40), :elapsed_time => '47:54' do
+        create_performance :race_competitor_id => race_competitor_id(:pete_tayler), :category => race_categories(:mv40), :elapsed_time => '47:54' do
           create_checkpoint_time "12:12", :race_checkpoint_id => race_checkpoint_id(:knott)
           create_checkpoint_time "17:12", :race_checkpoint_id => race_checkpoint_id(:raven_crag)
           create_checkpoint_time "29:12", :race_checkpoint_id => race_checkpoint_id(:stickle_pike)
           create_checkpoint_time "39:12", :race_checkpoint_id => race_checkpoint_id(:great_stickle)
         end
-        create_performance :race_competitor_id => race_competitor_id(:william_ross), :race_category_id => race_category_id(:m), :elapsed_time => '53:11' do
+        create_performance :race_competitor_id => race_competitor_id(:william_ross), :category => race_categories(:m), :elapsed_time => '53:11' do
           create_checkpoint_time "13:12", :race_checkpoint_id => race_checkpoint_id(:knott)
           create_checkpoint_time "24:12", :race_checkpoint_id => race_checkpoint_id(:raven_crag)
           create_checkpoint_time "36:12", :race_checkpoint_id => race_checkpoint_id(:stickle_pike)
@@ -140,14 +136,6 @@ class RacesDataset < Dataset::Base
       category = create_model :race_category, symbol, attributes
     end
     
-    def include_category(name, attributes={})
-      symbol = make_unique_id(:race_instance_category)
-      attributes[:race_instance_id] ||= @race_instance_id
-      attributes[:site_id] = site_id(:test) if defined? Site
-      attributes[:race_category_id] = race_category_id(name.symbolize)
-      create_record :race_instance_category, symbol, attributes
-    end
-    
     def create_checkpoint(name, attributes={})
       symbol = name.symbolize
       attributes = {
@@ -164,6 +152,7 @@ class RacesDataset < Dataset::Base
       symbol = make_unique_id(:race_performance)
       attributes[:race_instance_id] ||= @race_instance_id
       attributes[:site_id] = site_id(:test) if defined? Site
+      attributes[:status] = RacePerformanceStatus.from_time(attributes[:elapsed_time])
       performance = create_model :race_performance, symbol, attributes
       if block_given?
         @race_performance_id = performance.id

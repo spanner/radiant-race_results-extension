@@ -5,16 +5,21 @@ class RacePerformance < ActiveRecord::Base
   belongs_to :updated_by, :class_name => 'User'
   belongs_to :race_instance, :class_name => 'RaceInstance'
   belongs_to :race_competitor
-  belongs_to :category, :class_name => 'RaceCategory'
-  belongs_to :club, :class_name => 'RaceClub'
+  belongs_to :race_category
   has_many :checkpoint_times, :class_name => 'RaceCheckpointTime'
 
-  delegate :name, :reader, :to => :race_competitor
+  delegate :name, :reader, :club, :to => :competitor
   
   before_validation_on_create :times_from_checkpoints
   validates_presence_of :race_competitor_id, :race_instance_id
+  
+  default_scope :order => :elapsed_time
 
-  default_scope :order => 'elapsed_time DESC'
+  # has_many through doesn't work with a foreign_key setting, so we do the readable names here instead
+  alias :competitor :race_competitor
+  alias :competitor= :race_competitor=
+  alias :category :race_category
+  alias :category= :race_category=
 
   named_scope :top, lambda {|count|
     {
@@ -42,20 +47,17 @@ class RacePerformance < ActiveRecord::Base
   }
 
   named_scope :in_category, lambda {|category|
+    category = RaceCategory.find_by_name(category) unless category.is_a? RaceCategory
     {
       :conditions => ['race_category_id = ?', category.id]
     }
   }
 
   named_scope :eligible_for_category, lambda {|category|
+    category = RaceCategory.find_by_name(category) unless category.is_a? RaceCategory
+    eligible_categories = RaceCategory.within(category)
     {
-      :conditions => ['race_category_id in (?)', RaceCategory.within(category).map(&:id).join(',')]
-    }
-  }
-
-  named_scope :in_club, lambda {|club|
-    {
-      :conditions => ["(race_club_id = :club) or (race_club_id IS NULL AND race_competitors.race_club_id = :club)", {:club => club.id}]
+      :conditions => ["race_category_id in (#{eligible_categories.map{'?'}.join(',')})", *eligible_categories.map(&:id)]
     }
   }
 
@@ -74,7 +76,7 @@ class RacePerformance < ActiveRecord::Base
   }
 
   def start
-    started_at || race_instance.started_at || checkpoint_times.first.time
+    started_at || race_instance.started_at || checkpoint_times.first.elapsed_time
   end
 
   def finish
@@ -82,7 +84,11 @@ class RacePerformance < ActiveRecord::Base
   end
 
   def position
-    race_instance.performances.quicker_than(time).count + 1
+    unless pos = read_attribute(:position)
+      pos = race_instance.performances.quicker_than(elapsed_time).count + 1
+      write_attribute(:position, pos)
+    end
+    pos
   end
   
   def elapsed_time
@@ -90,9 +96,20 @@ class RacePerformance < ActiveRecord::Base
   end
   
   def elapsed_time=(time)
-    write_attribute(:elapsed_time, time.seconds)    # numbers will pass through unchanged. strings will be timecode-parsed
+    write_attribute(:elapsed_time, time.seconds) if time    # numbers will pass through unchanged. strings will be timecode-parsed
   end
-
+  
+  def time_at(checkpoint)
+    checkpoint_times.time_at(checkpoint).first
+  end
+  
+  def status
+    RacePerformanceStatus.find(self.status_id)
+  end
+  def status=(value)
+    self.status_id = value.id
+  end
+  
 protected
 
   def times_from_checkpoints
@@ -100,6 +117,6 @@ protected
     # self.finished_at ||= checkpoint_times.last.elapsed_time if checkpoint_times.any? && !elapsed_time
     # self.elapsed_time ||= finished_at - started_at
   end
-  
+
 end
 

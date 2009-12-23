@@ -2,7 +2,7 @@ require File.dirname(__FILE__) + '/../spec_helper'
 
 describe ActiveSupport::Duration do
   before do
-    @timecode = "05:27:25"
+    @timecode = "5:27:25"
     @duration = ActiveSupport::Duration.parse(@timecode)
   end
   
@@ -21,7 +21,7 @@ end
 
 describe Numeric do
   before do
-    @timecode = "05:27:25"
+    @timecode = "5:27:25"
   end
 
   describe "#to_timecode" do
@@ -33,12 +33,18 @@ end
 
 describe String do
   before do
-    @timecode = "05:27:25"
+    @timecode = "5:27:25"
   end
 
   describe "#to_seconds" do
     it "should return a duration of the right number of seconds" do
       @timecode.seconds.should == 19645
+    end
+  end
+
+  describe "#looks_like_duration?" do
+    it "should return true for a correctly formatted duration" do
+      @timecode.looks_like_duration?.should be_true
     end
   end
 end

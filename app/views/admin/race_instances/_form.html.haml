@@ -1,3 +1,6 @@
+- include_stylesheet calendar_date_select_stylesheets(:style => 'silver')
+- include_javascript calendar_date_select_javascripts
+
 = render_region :form_top
 
 - if @race_instance.errors.any?
@@ -7,9 +10,14 @@
     = @race_instance.errors.full_messages
 
 - render_region :form do |form|
-  - form.edit_title do
+  - form.edit_name do
     %p.title
-      = f.label :name, "Label to identify this results set (eg '2010')"
+      = f.label :name, "Title"
+      %span.formnote
+        to identify this results set (eg '2010' will show as 
+        %strong
+          = @race.name
+          2010)
       = f.text_field :name, :class => 'textbox', :maxlength => 100 
 
   - form.edit_metadata do
@@ -29,9 +37,31 @@
   - form.edit_start do
     %p.start
       = f.label :start, "Start time and date"
-      = calendar_date_select :race_instance, :started_at
+      %br
+      = f.calendar_date_select :started_at, :class => 'textbox date'
 
   - form.edit_file do
     %p.upload
-      %label.upload Choose a file to upload
-      = f.file_field :results, :class => "", :style => "width: 100%"
+      %label.upload 
+        Upload results file
+      %br
+      = f.file_field :results, :class => "upload"
+    %ul.help
+      %li
+        Results should be uploaded as a CSV file with a header row.
+      %li
+        These headings are understood:
+        %code name, pos, position, time, start, finish, club, cat, category
+      %li
+        Any heading we don't recognise is assumed to be a checkpoint column.
+      %li
+        Categories will be turned into the standard 
+        %code LVxx
+        and 
+        %code MVxx
+        format. 
+        %code Uxx
+        is also understood.
+      %li 
+        Times should be recorded as 
+        %code hh:mm:ss.

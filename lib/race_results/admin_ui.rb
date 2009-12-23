@@ -30,7 +30,7 @@ module RaceResults
             returning OpenStruct.new do |race_instance|
               race_instance.edit = Radiant::AdminUI::RegionSet.new do |edit|
                 edit.main.concat %w{edit_header edit_form}
-                edit.form.concat %w{edit_title edit_metadata edit_start edit_file}
+                edit.form.concat %w{edit_name edit_metadata edit_start edit_file}
               end
               race_instance.new = race_instance.edit
             end

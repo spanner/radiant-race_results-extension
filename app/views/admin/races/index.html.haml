@@ -5,13 +5,20 @@
 
 %table#races.index{:cellspacing=>"0", :border=>"0", :cellpadding=>"0"}
   %thead
-    = render :partial => 'list_head'
+    %tr
+      - render_region :thead do |thead|
+        - thead.title_header do
+          %th.race Race
+        - thead.instances_header do
+          %th.instances Results
+        - thead.modify_header do
+          %th.modify Modify
   %tbody
-    - @readers.each do |reader|
-      = render :partial => 'listed', :locals => {:reader => reader}
+    - @races.each do |race|
+      = render :partial => 'race', :object => race
 
 - render_region :bottom do |bottom|
   - bottom.new_button do
     - if admin?
       %p
-        = link_to image('new-race', :alt => 'New Race'), new_admin_reader_url, :title => "New Reader"
+        = link_to image('new-race', :alt => 'New Race'), new_admin_race_url, :title => "New Race"

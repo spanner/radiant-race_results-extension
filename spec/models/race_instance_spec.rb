@@ -55,43 +55,50 @@ describe RaceInstance do
     end
   end
 
-  describe "Importing results" do
-    before do
-      @race = Race.create(:name => "Long Duddon", :slug => 'long_duddon')
-      @ri = @race.instances.new({
-        :name => '2008', 
-        :slug => '2008'
-      })
-      @ri.should_receive(:read_results_file).and_return(CSV.read(File.dirname(__FILE__) + '/../files/long_duddon_2008.csv'))
-      @ri.results_updated = true
-      @ri.save!
-    end
-    
-    it "should get performances" do
-      @ri.performances.any?.should be_true
-      p @ri.performances.inspect
-    end
-    
-    # it "should get competitors" do
-    #   @ri.competitors.any?.should be_true
-    # end
+  it "should import correctly a results file with checkpoints" do
+    @race = Race.create(:name => "Long Duddon", :slug => 'long_duddon')
+    @ri = @race.instances.new({
+      :name => '2008', 
+      :slug => '2008'
+    })
+    @ri.save!
+    @ri.should_receive(:read_results_file).and_return(CSV.read(File.dirname(__FILE__) + '/../files/long_duddon_2008.csv'))
+    @ri.send :process_results_file
+
+    @ri.performances.any?.should be_true
+    @ri.performances.count.should == 229
+    perf = @ri.winning_performance
+    perf.competitor.should == RaceCompetitor.find_by_name("Simon Booth")
+    perf.elapsed_time.should == "2:52:31"
+    perf.position.should == 1
+    perf.status_id.should == 100
+    perf.status.should == RacePerformanceStatus['Finished']
+
+    perf.checkpoint_times.any?.should be_true
+    cp = @ri.checkpoints.first
+    cp.name.should == 'Harter'
+    perf.time_at(cp).elapsed_time.should == "0:36:30"
+
+    @ri.categories.any?.should be_true
+    @ri.categories.include?(race_categories(:mv40)).should be_true
+    @ri.winner('MV40').should == RaceCompetitor.find_by_name("Simon Booth")
+    @ri.winner('MV50').should == RaceCompetitor.find_by_name("David Spedding")
+    @ri.winner('MV60').should == RaceCompetitor.find_by_name("David Spedding")
+
+    # p "    L: #{RaceCategory.find_by_name('L').inspect}"
+    # p "    LV40: #{RaceCategory.find_by_name('LV40').inspect}"
     # 
-    # it "should get categories" do
-    #   @ri.categories.any?.should be_true
-    # end
+    # categories = RaceCategory.within("LV40")
+    # p "    categories in LV40 and above: #{categories.map(&:name).to_sentence}"
     # 
-    # it "should get checkpoints" do
-    #   @ri.checkpoints.any?.should be_true
-    # end
-    
-    
-    
-    
-    
-    
-    
-    
-    
+    # exact = @ri.performances.in_category("LV40")
+    # p "    performances in LV40: #{exact.inspect}"
+    # 
+    # eligible = @ri.performances.eligible_for_category("LV40")
+    # p "    performances in LV40 and above: #{eligible.inspect}"
+
+    @ri.winner('LV40').should == RaceCompetitor.find_by_name("Helene Whitaker")
+    @ri.winner('L').should == RaceCompetitor.find_by_name("Janet McIver")
   end
 
 end

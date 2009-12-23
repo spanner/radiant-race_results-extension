@@ -79,27 +79,12 @@ class RaceData < ActiveRecord::Migration
     end
     add_index :race_competitors, :name, :unique => true
     
-    # performances can be simple (start and finish) or compound (with intervening checkpoints)
-    
-    create_table :race_instance_categories do |t|
-      t.column :race_instance_id,   :integer
-      t.column :race_category_id,   :integer
-      t.column :prizes,             :integer
-      t.column :team_prizes,        :integer
-      t.column :record,             :integer
-      t.column :created_by_id,      :integer
-      t.column :updated_by_id,      :integer
-      t.column :created_at,         :datetime
-      t.column :updated_at,         :datetime
-      t.column :site_id,            :integer
-    end
-    add_index :race_instance_categories, [:race_instance_id, :race_category_id]
-    
     create_table :race_performances do |t|
       t.column :number,             :integer
+      t.column :position,           :integer
       t.column :race_instance_id,   :integer
       t.column :race_competitor_id, :integer
-      t.column :race_category_id,   :integer
+      t.column :race_instance_category_id, :integer
       t.column :race_club_id,       :integer
       t.column :dibber,             :string
       t.column :started_at,         :datetime
@@ -132,7 +117,6 @@ class RaceData < ActiveRecord::Migration
     drop_table :race_checkpoints
     drop_table :race_instances
     drop_table :race_categories
-    drop_table :race_instance_categories
     drop_table :race_clubs
     drop_table :race_competitors
     drop_table :race_performances

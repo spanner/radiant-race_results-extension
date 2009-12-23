@@ -7,14 +7,12 @@ class RaceInstance < ActiveRecord::Base
   belongs_to :updated_by, :class_name => 'User'
   belongs_to :race
   has_many :checkpoints, :class_name => 'RaceCheckpoint'
-  has_many :race_instance_categories
-  has_many :categories, :through => :race_instance_categories, :source => :race_category
   has_many :performances, :class_name => 'RacePerformance'
+  has_many :categories, :through => :performances, :source => :race_category, :uniq => true
   has_many :competitors, :through => :performances, :source => :race_competitor
 
   has_attached_file :results  
-  attr_accessor :results_updated
-  after_save :process_results_file
+  after_post_process :process_results_file    # this probably ought to move into a paperclip processor
 
   default_scope :order => 'started_at DESC'
 
@@ -23,7 +21,7 @@ class RaceInstance < ActiveRecord::Base
   validates_length_of :slug, :maximum => 100, :message => '{{count}}-character limit'
   validates_format_of :slug, :with => %r{^([-_.A-Za-z0-9]*|)$}, :message => 'not URL-friendly'
 
-  def name
+  def full_name
     "#{race.name}: #{slug}"
   end
   
@@ -46,28 +44,34 @@ class RaceInstance < ActiveRecord::Base
   def winning_performance(category=nil)
     if category
       category = RaceCategory.find_by_name(category) unless category.is_a? RaceCategory
-      performances.eligible_for_category(category).first if categories.include?(category)
+      performances.completed.eligible_for_category(category).first if category_present?(category)
     else
-      performances.first
+      performances.completed.first
     end
   end
   
   def winner(category=nil)
-    winning_performance(category).race_competitor
+    if perf = winning_performance(category)
+      perf.competitor
+    end
   end
     
   def top(count=20)
     performances.top(count)
   end
   
-  def category_top(count=5)
-    performances.eligible_for_category(category).top(count)
+  def category_top(category, count=5)
+    performances.eligible_for_category(category).top(count) if category_present?(category)
+  end
+  
+  def category_present?(category)
+    categories.include?(category)
   end
   
 protected
   
   def process_results_file
-    if results_updated && csv_data = read_results_file
+    if csv_data = read_results_file
       headers = csv_data.shift.map(&:to_s)
       race_data = csv_data.map {|row| row.map {|cell| cell.to_s } }.map {|row| Hash[*headers.zip(row).flatten] } # build AoA and then hash the second level
   
@@ -75,17 +79,26 @@ protected
         performances.destroy_all
         race_data.each do |line|
           runner = normalize_fields(line)
+          runner['time'] ||= "0"
           club = RaceClub.find_or_create_by_name_or_alias(runner.delete('club'))
           competitor = RaceCompetitor.find_or_create_by_name_and_race_club_id(runner.delete('name'), club.id)
           category = RaceCategory.find_or_create_by_normalized_name(runner.delete('category'))
+          status = RacePerformanceStatus.from_time(runner['elapsed_time'])
           performance = self.performances.create!({
-            :club => club, 
-            :race_competitor => competitor,
+            :position => runner.delete('position'),
+            :competitor => competitor,
             :category => category,
-            :elapsed_time => runner.delete('elapsed_time')
+            :elapsed_time => runner.delete('elapsed_time'),
+            :status_id => status.id
           })
-          runner.keys.select{|k| runner[k].match(/^[\d\:]+$/) }.each do |key|
-            performance.checkpoint_times.create!(:checkpoint => checkpoints.find_or_create_by_name(key), :elapsed_time => runner[key])
+          
+          # loop on headers to keep checkpoints in order
+          headers.each do |key|
+            value = runner[normalize(key)]
+            if value && value.looks_like_duration?
+              cp = checkpoints.find_or_create_by_name(key)
+              cp.times.create(:race_performance_id => performance.id, :elapsed_time => value)
+            end
           end
         end
       end
@@ -105,12 +118,15 @@ protected
   
   def normalize_fields(line)
     line.keys.each do |key|
-      clean_key = key.gsub(/\s+/, "_").downcase
-      clean_key = @@field_aliases[clean_key] if @@field_aliases[clean_key]
-      line[clean_key] = line.delete(key)
+      line[normalize(key)] = line.delete(key)
     end
     line
   end
-
+  
+  def normalize(value)
+    squashed = value.gsub(/\s+/, "_").downcase
+    @@field_aliases[squashed] || squashed
+  end
+  
 end
 

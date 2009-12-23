@@ -32,7 +32,7 @@ module DurationExtensions
       h = (value/3600).floor;
       m = ((value % 3600)/60).floor;
       s = value % 60;
-      sprintf("%02d:%02d:%02d", h, m, s)
+      sprintf("%d:%02d:%02d", h, m, s)
     end
     alias :to_timecode :timecode
   end
@@ -43,6 +43,11 @@ module StringExtensions
     ActiveSupport::Duration.parse(self)
   end
   alias :seconds :duration
+  
+  def looks_like_duration?
+    delimiters = Radiant::Config['race_results.delimiters'] || ':,.'
+    true if self.match(/^[\d#{Regexp.escape(delimiters)}]+$/)
+  end
 end
 
 module NumericExtensions

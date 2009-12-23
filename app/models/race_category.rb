@@ -5,22 +5,24 @@ class RaceCategory < ActiveRecord::Base
   validates_presence_of :name
 
   named_scope :within, lambda {|category|
+    category = RaceCategory.find_by_name(category) unless category.is_a? RaceCategory
     conditions = []
-    bound = []
+    bound = {}
     if category.age_above
-      conditions.push "race_categories.age_above >= ?"
-      bound.push category.age_above
+      conditions.push "race_categories.age_above >= :above"
+      bound[:above] = category.age_above
     end
     if category.age_below
-      conditions.push "race_categories.age_below <= ?"
-      bound.push category.age_below
+      conditions.push "race_categories.age_below <= :below"
+      bound[:below] = category.age_below
     end
     if category.gender
-      conditions.push "race_categories.gender = ?"
-      bound.push category.gender
+      conditions.push "race_categories.gender = :gender"
+      bound[:gender] = category.gender
     end
+    
     {
-      :conditions => [conditions.join(' AND '), *bound]   # note that the results will always include the passed category
+      :conditions => [conditions.join(' AND '), bound]   # note that the results will always include the passed category
     }
   }
   
@@ -28,8 +30,10 @@ class RaceCategory < ActiveRecord::Base
     name = normalized_name(name)
     unless category = find_by_name(name)
       category = new(:name => name)
-      if matches = name.match(/^([A-Z]+)(\d+)$/)
-        category.send(matches[1].match(/U/) ? :age_below= : :age_above=, matches[2])
+      if matches = name.match(/^([A-Z]+)(\d*)$/)
+        if matches[2] 
+          category.send(matches[1].match(/U/) ? :age_below= : :age_above=, matches[2])
+        end
         category.gender = matches[1].match(/L/) ? "F" : "M"
       end
       category.save!
