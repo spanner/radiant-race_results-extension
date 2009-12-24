@@ -26,6 +26,7 @@ class RaceData < ActiveRecord::Migration
       t.column :updated_at,         :datetime
       t.column :site_id,            :integer
     end
+    add_index :race_instances, [:site_id]
     add_index :race_instances, [:slug, :race_id], :unique => true
 
     # this ought to be suitable for score courses too
@@ -43,7 +44,8 @@ class RaceData < ActiveRecord::Migration
       t.column :updated_at,         :datetime
       t.column :site_id,            :integer
     end
-    add_index :race_checkpoints, [:race_instance_id, :site_id]
+    add_index :race_checkpoints, [:site_id]
+    add_index :race_checkpoints, [:race_instance_id]
     
     # clubs, categories and competitors are global
 
@@ -63,7 +65,6 @@ class RaceData < ActiveRecord::Migration
       t.column :updated_by_id,      :integer
       t.column :created_at,         :datetime
       t.column :updated_at,         :datetime
-      t.column :site_id,            :integer
     end
     add_index :race_clubs, :name, :unique => true
     
@@ -84,7 +85,7 @@ class RaceData < ActiveRecord::Migration
       t.column :position,           :integer
       t.column :race_instance_id,   :integer
       t.column :race_competitor_id, :integer
-      t.column :race_instance_category_id, :integer
+      t.column :race_category_id,   :integer
       t.column :race_club_id,       :integer
       t.column :dibber,             :string
       t.column :started_at,         :datetime
@@ -98,7 +99,8 @@ class RaceData < ActiveRecord::Migration
       t.column :status_id,          :integer
       t.column :site_id,            :integer
     end
-    add_index :race_performances, [:race_instance_id, :race_competitor_id]
+    add_index :race_performances, [:site_id]
+    add_index :race_performances, [:race_instance_id, :race_competitor_id, :race_category_id], :name => 'performances_by_competitor_and_category'
     
     create_table :race_checkpoint_times do |t|
       t.column :race_performance_id,:integer
@@ -110,6 +112,7 @@ class RaceData < ActiveRecord::Migration
       t.column :updated_at,         :datetime
       t.column :site_id,            :integer
     end
+    add_index :race_checkpoint_times, [:site_id]
   end
 
   def self.down
