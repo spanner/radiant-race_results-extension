@@ -2,16 +2,25 @@
   - render_region :tbody do |tbody|
     - tbody.title_cell do
       %td.race_name
-        = link_to race.name, edit_admin_race_url(race)
+        %p
+          = link_to race.name, edit_admin_race_url(race)
+          = link_to(image('minus'), admin_race_url(race), :class => 'remove', :method => :delete, :title => "Delete #{race.name} and all results", :confirm => "Do you really want to delete the race #{race.name} and all its results?") 
+          %span.info
+            = truncate race.description, 100
 
     - tbody.instances_cell do
       %td.race_instances
-        - race.instances.each do |ri|
-          = link_to ri.name, edit_admin_race_race_instance_url(race, ri)
-          %span.separator |
-        = link_to(image('plus', :alt => 'add results'), new_admin_race_race_instance_url(race)) 
-
-    - tbody.modify_cell do
-      %td.modify
-        - if admin?
-          = link_to(image('remove', :alt => 'Remove Race'), admin_race_url(race), :method => :delete, :confirm => "really delete race #{race.name}?") 
+        %ul.instances
+          - race.instances.each do |ri|
+            %li
+              = link_to "#{ri.name}", edit_admin_race_race_instance_url(race, ri)
+              = link_to("#{image('minus')}", admin_race_race_instance_url(race, ri), :class => 'remove', :method => :delete, :confirm => "really delete #{ri.full_name}?") 
+              %br
+              %span.info
+                - if ri.performances.any?
+                  = ri.performances.count
+                  competitors
+                - else
+                  no results yet
+          
+        = link_to("#{image('plus', :alt => 'add results')} add an occasion", new_admin_race_race_instance_url(race)) 

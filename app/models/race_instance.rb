@@ -10,7 +10,7 @@ class RaceInstance < ActiveRecord::Base
   has_many :performances, :class_name => 'RacePerformance'
   has_many :categories, :through => :performances, :source => :race_category, :uniq => true
   has_many :competitors, :through => :performances, :source => :race_competitor
-
+  
   has_attached_file :results  
   after_post_process :process_results_file    # this probably ought to move into a paperclip processor
 
@@ -83,6 +83,7 @@ protected
           club = RaceClub.find_or_create_by_name_or_alias(runner.delete('club'))
           competitor = RaceCompetitor.find_or_create_by_name_and_race_club_id(runner.delete('name'), club.id)
           category = RaceCategory.find_or_create_by_normalized_name(runner.delete('category'))
+          competitor.update_attribute(:gender, category.gender) unless competitor.gender
           status = RacePerformanceStatus.from_time(runner['elapsed_time'])
           performance = self.performances.create!({
             :position => runner.delete('position'),

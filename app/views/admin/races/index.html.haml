@@ -8,11 +8,14 @@
     %tr
       - render_region :thead do |thead|
         - thead.title_header do
-          %th.race Race
+          %th.race 
+            Race Name
         - thead.instances_header do
-          %th.instances Results
+          %th.instances 
+            Occasions
         - thead.modify_header do
-          %th.modify Modify
+          %th.modify
+          
   %tbody
     - @races.each do |race|
       = render :partial => 'race', :object => race

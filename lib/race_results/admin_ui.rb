@@ -19,8 +19,8 @@ module RaceResults
               end
               race.new = race.edit
               race.index = Radiant::AdminUI::RegionSet.new do |index|
-                index.thead.concat %w{title_header instances_header modify_header}
-                index.tbody.concat %w{title_cell instances_cell modify_cell}
+                index.thead.concat %w{title_header instances_header}
+                index.tbody.concat %w{title_cell instances_cell}
                 index.bottom.concat %w{new_button}
               end
             end
