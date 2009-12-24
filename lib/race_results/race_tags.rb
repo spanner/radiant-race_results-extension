@@ -1,7 +1,7 @@
 module RaceResults
-  module Tags
+  module RaceTags
     include Radiant::Taggable
-    # include ActionView::Helpers::TextHelper
+    include ActionView::Helpers::TextHelper
     # include ActionView::Helpers::TagHelper
 
     class TagError < StandardError; end
@@ -30,7 +30,7 @@ module RaceResults
     ####### races
 
     desc %{
-      Retreives a single race from the name or id you supply.
+      Retreives a single race from the name or id you supply or (on a RacePage) from the url or parameters.
       All the r:race:* tags will follow the same retrieval rules.
   
       *Usage:* 
@@ -38,12 +38,47 @@ module RaceResults
     }
     tag 'race' do |tag|
       _get_race(tag)
+      raise TagError, "No such race" unless tag.locals.race
+      tag.expand
+    end
+    
+    desc %{
+      Expands if a race is available. Most useful on a RacePage.
+  
+      *Usage:* 
+      <pre><code><r:if_race>...</r:if_race></code></pre>
+    }
+    tag 'if_race' do |tag|
+      _get_race(tag)
       tag.expand if tag.locals.race
     end
+    
+    desc %{
+      Expands if no race is available. Most useful on a RacePage.
+  
+      *Usage:* 
+      <pre><code><r:unless_race>...</r:unless_race></code></pre>
+    }
+    tag 'unless_race' do |tag|
+      _get_race(tag)
+      tag.expand unless tag.locals.race
+    end
+    
+    desc %{
+      Displays the formatted description of the currently selected race.
 
-    [:id, :name, :slug].each do |field|
+      *Usage:* 
+      <pre><code><r:race:description /></code></pre>
+    }
+    tag "race:description" do |tag|
+      _get_race(tag)
+      tag.locals.race.filter.filter(tag.locals.race.description)
+    end
+    
+
+    [:id, :name, :slug, :distance, :climb].each do |field|
       desc %{
-        Displays the #{field} column of the currently selected race.
+        Displays the #{field} of the currently selected race.
 
         *Usage:* 
         <pre><code><r:race:#{field} /></code></pre>
@@ -61,12 +96,12 @@ module RaceResults
       *Usage:* 
       <pre><code><r:race:instances:each>...</r:race:instances:each></code></pre>
     }
-    tag 'race:instances' do |tag|
+    tag 'race:results' do |tag|
       _get_race(tag)
-      raise TagError, "No race to show instances of" unless tag.locals.race
+      raise TagError, "No race to show results of" unless tag.locals.race
       tag.expand
     end
-    tag 'race:instances:each' do |tag|
+    tag 'race:results:each' do |tag|
       result = []
       tag.locals.race.instances.each do |instance|
         tag.locals.race_instance = instance
@@ -78,7 +113,7 @@ module RaceResults
     ####### race instances (required for most other tags)
 
     desc %{
-      Retrieves a set of results from the specified race and instance.
+      Retrieves a set of results from the specified race and instance or (on a RacePage) from the url or parameters.
   
       *Usage:* 
       <pre><code>
@@ -93,11 +128,110 @@ module RaceResults
     }
     tag 'results' do |tag|
       _get_race_instance(tag)
-      raise TagError, "No race instance to show results of" unless tag.locals.race_instance
+      raise TagError, "No race instance whose results to show" unless tag.locals.race_instance
       tag.expand
     end
+    
+    desc %{
+      Expands if a race instance is available. Most useful on a RacePage.
+  
+      *Usage:* 
+      <pre><code><r:if_results>...</r:if_results></code></pre>
+    }
+    tag 'if_results' do |tag|
+      _get_race_instance(tag)
+      tag.expand if tag.locals.race_instance
+    end
+    
+    desc %{
+      Expands if no race instance is available. Most useful on a RacePage.
+  
+      *Usage:* 
+      <pre><code><r:unless_results>...</r:unless_results></code></pre>
+    }
+    tag 'unless_results' do |tag|
+      _get_race_instance(tag)
+      tag.expand unless tag.locals.race_instance
+    end
+    
+    desc %{
+      Expands if results are available for this race instance.
+  
+      *Usage:* 
+      <pre><code><r:if_results_uploaded>...</r:if_results_uploaded></code></pre>
+    }
+    tag 'if_results_uploaded' do |tag|
+      _get_race_instance(tag)
+      raise TagError, "No race instance to check for results" unless tag.locals.race_instance
+      tag.expand if tag.locals.race_instance.has_results?
+    end
+    
+    desc %{
+      Expands if results are not available for this race instance.
+  
+      *Usage:* 
+      <pre><code><r:r:unless_results_uploaded>...</r:r:unless_results_uploaded></code></pre>
+    }
+    tag 'unless_results_uploaded' do |tag|
+      _get_race_instance(tag)
+      raise TagError, "No race instance to check for results" unless tag.locals.race_instance
+      tag.expand unless tag.locals.race_instance.has_results?
+    end
 
-    [:checkpoints, :categories, :competitors, :performances].each do |collection|
+
+    [:id, :name, :full_name, :slug, :path, :notes, :report].each do |field|
+      desc %{
+        Displays the #{field} column of the currently selected race instance.
+
+        *Usage:* 
+        <pre><code><r:results:#{field} /></code></pre>
+      }
+      tag "results:#{field}" do |tag|
+        _get_race_instance(tag)
+        raise TagError, "No race instance to show #{field} of" unless tag.locals.race_instance
+        tag.locals.race_instance.send(field)
+      end
+    end
+
+    [:notes, :report].each do |field|
+      desc %{
+        Displays the formatted #{field} column of the currently selected race instance.
+
+        *Usage:* 
+        <pre><code><r:results:#{field} /></code></pre>
+      }
+      tag "results:#{field}" do |tag|
+        _get_race_instance(tag)
+        raise TagError, "No race instance whose #{field} to show" unless tag.locals.race_instance
+        tag.locals.race_instance.filter.filter(tag.locals.race_instance.send(field))
+      end
+    end
+    
+    desc %{
+      Displays the start of the current race instance as a date.
+
+      *Usage:* 
+      <pre><code><r:results:start_date /></code></pre>
+    }
+    tag "results:start_date" do |tag|
+      _get_race_instance(tag)
+      raise TagError, "No race instance whose date to show" unless tag.locals.race_instance
+      tag.locals.race_instance.nice_start_date
+    end
+    
+    desc %{
+      Displays the start of the current race instance as a time of day. 
+
+      *Usage:* 
+      <pre><code><r:results:start_time /></code></pre>
+    }
+    tag "results:start_time" do |tag|
+      _get_race_instance(tag)
+      raise TagError, "No race instance whose start time to show" unless tag.locals.race_instance
+      tag.locals.race_instance.nice_start_time
+    end
+
+    [:checkpoints, :categories, :competitors, :performances, :finishers, :non_finishers].each do |collection|
       desc %{
         Loops through the list of #{collection} in the current results set.
   
@@ -112,13 +246,15 @@ module RaceResults
       tag "#{collection}:each" do |tag|
         _get_race_instance(tag)
         result = []
-        tag.locals.race_instance.send(colletion).each do |member|
-          tag.locals.send("#{collection.to_s.singularize}=".intern, member)
+        tag.locals.race_instance.send(collection).each do |member|
+          setter = [:performances, :finishers, :non_finishers].include?(collection) ? 'performance=' : "#{collection.to_s.singularize}="
+          tag.locals.send(setter, member)
           result << tag.expand
         end
         result
       end
     end
+  
 
     ####### performances
 
@@ -135,7 +271,7 @@ module RaceResults
       tag.expand
     end
 
-    [:name, :number, :elapsed_time, :position].each do |field|
+    [:position, :name, :number, :elapsed_time, :position, :status].each do |field|
       desc %{
         Displays the #{field} column of the performance currently in the foreground.
 
@@ -172,7 +308,30 @@ module RaceResults
         end
       end
     end
-  
+    
+    tag "performance:if_finished" do |tag|
+      _get_race_performance(tag)
+      tag.expand if tag.locals.performance.finished?
+    end
+    tag "performance:unless_finished" do |tag|
+      _get_race_performance(tag)
+      tag.expand unless tag.locals.performance.finished?
+    end
+
+    tag "performance:if_prize" do |tag|
+      _get_race_performance(tag)
+      tag.expand if tag.locals.performance.prized?
+    end
+    tag "performance:unless_prize" do |tag|
+      _get_race_performance(tag)
+      tag.expand unless tag.locals.performance.prized?
+    end
+    
+    tag "performance:prize" do |tag|
+      _get_race_performance(tag)
+      tag.locals.performance.prize
+    end
+
     desc %{
       Loops through the list of checkpoint times associated with the present performance. Within this tag
       you can use r:checkpoint_time singly just to show the split time, or a clause like this to show more detail:
@@ -215,7 +374,7 @@ module RaceResults
       tag.expand
     end
 
-    [:name, :record, :entries, :finishers].each do |field|
+    [:id, :name, :record, :entries, :finishers].each do |field|
       desc %{
         Displays the #{field} column of the race category currently in the foreground.
 
@@ -265,7 +424,7 @@ module RaceResults
       raise TagError, "No club found" unless tag.locals.club
       tag.expand
     end
-    [:name, :url].each do |field|
+    [:id, :name, :url].each do |field|
       desc %{
         Displays the #{field} column of the club currently in the foreground.
 
@@ -308,7 +467,7 @@ module RaceResults
       raise TagError, "No checkpoint found" unless tag.locals.checkpoint
       tag.expand
     end
-    [:name, :location].each do |field|
+    [:id, :name, :location].each do |field|
       desc %{
         Displays the #{field} column of the checkpoint currently in the foreground.
 
@@ -507,21 +666,22 @@ module RaceResults
 
   private
 
-    def _get_race(tag)
+    def _get_races(tag)
       return tag.locals.races if tag.locals.races
       tag.locals.races = Race.all
     end
 
     def _get_race(tag)
+      tag.locals.race ||= tag.locals.page.race if tag.locals.page.is_a? RacePage
       return tag.locals.race if tag.locals.race
-      raise TagError, "no race name supplied" unless tag.attr['name']
-      tag.locals.race = Race.find_by_name(tag.attr['name'])
+      tag.locals.race = Race.find_by_name(tag.attr['name']) if tag.attr['name']
     end
 
     def _get_race_instance(tag)
+      tag.locals.race_instance ||= tag.locals.page.race_instance if tag.locals.page.is_a? RacePage
       return tag.locals.race_instance if tag.locals.race_instance
       _get_race(tag)
-      raise TagError, "no race found" unless tag.locals.race
+      return unless tag.locals.race && tag.attr['instance']
       tag.locals.race_instance = tag.locals.race.in(tag.attr['instance'])
     end
 

@@ -1,0 +1,121 @@
+/* index page */
+
+table.index td.race_name {
+  font-size: 115%;
+  font-weight: bold;
+  vertical-align: top;
+}
+
+table.index td.race_name a {
+  color: black;
+  text-decoration: none;
+}
+
+table.index td.race_instances {
+  font-size: 90%;
+  vertical-align: top;
+}
+
+table.index td.race_instances a {
+  text-decoration: none;
+}
+
+ul.instances {
+  list-style: square;
+  padding-left: 0;
+}
+
+ul.instances li {
+  margin-bottom: 6px;
+}
+
+ul.instances li a {
+  font-size: 115%;
+  font-weight: bold;
+}
+
+a.remove {
+  font-weight: bold;
+  color: #c00;
+  text-decoration: none;
+}
+
+span.formnote, span.info {
+  color: #666;
+  font-size: 85%;
+}
+
+/* edit pages */
+
+#content .form-area p.body {
+  margin-top: 20px;
+}
+
+ul.help {
+  list-style: square;
+  color: #666;
+  font-size: 85%;
+}
+
+ul.help code {
+  color: #c00;
+  font-size: 115%;
+}
+
+p.haserror {
+	border-left: 4px solid #c00;
+	margin-left: -16px;
+	padding-left: 12px;
+	color: #c00 !important;
+}
+
+#content .form-area div.leftcolumn {
+  width: 48%;
+  margin-right: 2%;
+  float: left;
+}
+
+#content .form-area div.rightcolumn {
+  width: 48%;
+  float: left;
+  margin: 0;
+}
+
+#content .form-area .title label {
+  display: inline;
+}
+
+#content .form-area .textbox {
+  width: 100%;
+  border:1px solid #CDC295;
+  font-family:Monaco,"Courier New",Courier,monospace;
+  font-size:95%;
+  padding: 4px;
+}
+
+#content .form-area textarea {
+  width: 100%;
+  height: 60px;
+  border:1px solid #CDC295;
+  font-family:Monaco,"Courier New",Courier,monospace;
+  font-size:95%;
+  padding: 4px;
+}
+
+#content .form-area textarea.large {
+  height: 150px;
+}
+
+#content .form-area input.date, #content .form-area input.upload {
+  width: 300px;
+}
+
+#content .form-area p.buttons {
+  margin-top: 20px;
+}
+
+
+#content .form-area span.info {
+  font-size: 80%;
+  color: #7D796C;
+}

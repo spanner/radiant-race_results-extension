@@ -20,7 +20,7 @@ class RacePerformance < ActiveRecord::Base
   alias :competitor= :race_competitor=
   alias :category :race_category
   alias :category= :race_category=
-
+  
   named_scope :top, lambda {|count|
     {
       :order => 'elapsed_time DESC',
@@ -90,7 +90,7 @@ class RacePerformance < ActiveRecord::Base
     end
     pos
   end
-  
+    
   def elapsed_time
     read_attribute(:elapsed_time).to_timecode
   end
@@ -108,6 +108,17 @@ class RacePerformance < ActiveRecord::Base
   end
   def status=(value)
     self.status_id = value.id
+  end
+  def finished?
+     status == RacePerformanceStatus["Finished"]
+  end
+  
+  def prized?
+    # true if we won a prize
+  end
+  
+  def prize
+    # report that we won a prize
   end
   
 protected

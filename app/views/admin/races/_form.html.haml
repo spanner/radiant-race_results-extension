@@ -40,3 +40,5 @@
     %p.title
       = f.label :name, "Race Description"
       = f.text_area "description", :size => '40x8', :class => "textarea" 
+      %label{:for => "race_filter_id"} Filter
+      = select_tag "race[filter_id]", filter_options_for_select(@race.filter_id), :id => "race_filter_id"

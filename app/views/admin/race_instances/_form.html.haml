@@ -10,7 +10,10 @@
     = @race_instance.errors.full_messages
 
 - render_region :form do |form|
+
+  
   - form.edit_name do
+    %h2 Before the race
     %p.title
       = f.label :name, "Title"
       %span.formnote
@@ -40,7 +43,16 @@
       %br
       = f.calendar_date_select :started_at, :class => 'textbox date'
 
+  - form.edit_notes do
+    %p.start
+      = f.label :notes, "Notes for competitors"
+      %span.formnote
+        if anything is different on this occasion
+      %br
+      = f.text_area "notes", :size => '40x6', :class => "textarea" 
+
   - form.edit_file do
+    %h2 After the race
     %p.upload
       %label.upload 
         Upload results file
@@ -65,3 +77,9 @@
       %li 
         Times should be recorded as 
         %code hh:mm:ss.
+        
+  - form.edit_report do
+    %p.start
+      = f.label :report, "Race Report"
+      %br
+      = f.text_area "report", :size => '40x12', :class => "textarea" 

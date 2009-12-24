@@ -11,6 +11,8 @@ class Race < ActiveRecord::Base
   validates_length_of :slug, :maximum => 100, :message => '{{count}}-character limit'
   validates_format_of :slug, :with => %r{^([-_.A-Za-z0-9]*|)$}, :message => 'not URL-friendly'
 
+  object_id_attr :filter, TextFilter
+
   def latest
     instances.first   # they sort by start time desc
   end

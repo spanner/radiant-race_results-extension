@@ -5,7 +5,7 @@ class RacePage < Page
     def initialize(message = nil); super end
   end
 
-  description %{ Takes tag names in child position or as parameters so that tagged items can be listed. }
+  description %{ Takes race and race instance names in child position or as parameters and populates the necessary race objects. }
   
   attr_accessor :race, :race_instance
   
@@ -22,14 +22,15 @@ class RacePage < Page
     my_url = self.url
     return false unless url =~ /^#{Regexp.quote(my_url)}(.*)/
     parts = $1.split('/')
-    if racename = parts.shift
-      @race = Race.find_by_slug(racename)
-      if yearname = parts.shift
-        @race_instance = @race.instances.find_by_slug(yearname)
+    if race_slug = parts.shift
+      @race = Race.find_by_slug(race_slug)
+      if instance_slug = parts.shift
+        @race_instance = @race.instances.find_by_slug(instance_slug)
       else
         @race_instance = @race.latest
       end
     end
+    self
   end
 
   def pagination
@@ -39,6 +40,24 @@ class RacePage < Page
       :page => request.params[:page] || 1, 
       :per_page => Radiant::Config['race_results.per_page'] || 100
     }
+  end
+  
+  def race
+    @race
+  end
+  
+  def race_instance
+    @race_instance
+  end
+  
+  def title
+    if @race_instance
+      @race_instance.full_name
+    elsif @race
+      @race.name
+    else
+      read_attribute(:title)
+    end
   end
   
   

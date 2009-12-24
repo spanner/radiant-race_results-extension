@@ -35,8 +35,7 @@ class RaceResultsExtension < Radiant::Extension
   
   def activate
     require 'duration_extensions'
-    
-    Page.send :include, RaceResults::Tags
+    Page.send :include, RaceResults::RaceTags
     
     unless defined? admin.race
       Radiant::AdminUI.send :include, RaceResults::AdminUI

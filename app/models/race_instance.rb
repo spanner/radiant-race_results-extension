@@ -8,8 +8,13 @@ class RaceInstance < ActiveRecord::Base
   belongs_to :race
   has_many :checkpoints, :class_name => 'RaceCheckpoint'
   has_many :performances, :class_name => 'RacePerformance'
-  has_many :categories, :through => :performances, :source => :race_category, :uniq => true
   has_many :competitors, :through => :performances, :source => :race_competitor
+  has_many :categories, :through => :performances, :source => :race_category, :uniq => true
+
+  has_many :finishers, :class_name => 'RacePerformance', :conditions => "race_performances.status_id >= 100"
+  has_many :non_finishers, :class_name => 'RacePerformance', :conditions => "race_performances.status_id < 100"
+  has_many :successful_competitors, :through => :finishers, :source => :race_competitor
+  has_many :unsuccessful_competitors, :through => :non_finishers, :source => :race_competitor
   
   has_attached_file :results  
   after_post_process :process_results_file    # this probably ought to move into a paperclip processor
@@ -21,8 +26,31 @@ class RaceInstance < ActiveRecord::Base
   validates_length_of :slug, :maximum => 100, :message => '{{count}}-character limit'
   validates_format_of :slug, :with => %r{^([-_.A-Za-z0-9]*|)$}, :message => 'not URL-friendly'
 
+  object_id_attr :filter, TextFilter
+  
   def full_name
-    "#{race.name}: #{slug}"
+    "#{race.name}: #{name}"
+  end
+  
+  def path
+    "#{race.slug}/#{slug}"
+  end
+  
+  def nice_start_time
+    return unless started_at
+    if started_at.min == 0
+      started_at.to_datetime.strftime("%-1I%p").downcase
+    else
+      started_at.to_datetime.strftime("%-1I:%M%p").downcase
+    end
+  end
+  
+  def nice_start_date
+    started_at.to_datetime.strftime("%B %e %Y") if started_at
+  end
+  
+  def has_results?
+    performances.any?
   end
   
   def checkpoint_before(cp)
@@ -74,7 +102,7 @@ protected
     if csv_data = read_results_file
       headers = csv_data.shift.map(&:to_s)
       race_data = csv_data.map {|row| row.map {|cell| cell.to_s } }.map {|row| Hash[*headers.zip(row).flatten] } # build AoA and then hash the second level
-  
+      Rails.logger.warn "^^  importing race data: #{race_data.size} lines"
       RaceInstance.transaction do
         performances.destroy_all
         race_data.each do |line|
