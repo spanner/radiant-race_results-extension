@@ -3,7 +3,7 @@ class RacePerformance < ActiveRecord::Base
   has_site if respond_to? :has_site
   belongs_to :created_by, :class_name => 'User'
   belongs_to :updated_by, :class_name => 'User'
-  belongs_to :race_instance, :class_name => 'RaceInstance'
+  belongs_to :race_instance
   belongs_to :race_competitor
   belongs_to :race_category
   has_many :checkpoint_times, :class_name => 'RaceCheckpointTime'
