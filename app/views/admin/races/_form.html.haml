@@ -26,6 +26,16 @@
         %a{ :id => "more-extended-metadata", :href => "#", :onclick => "#{toggle_javascript_for('extended-metadata')}; return false;" } More
         %a{ :id => "less-extended-metadata", :href => "#", :onclick => "#{toggle_javascript_for('extended-metadata')}; return false;", :style => "display: none" } Less
 
+  - form.edit_distance do
+    %div.leftcolumn
+      %p.distance
+        = f.label :distance, "Distance (in miles)"
+        = f.text_field :distance, :class => 'textbox'
+    %div.rightcolumn
+      %p.climb
+        = f.label :climb, "Climb (in feet)"
+        = f.text_field :climb, :class => 'textbox'
+
   - form.edit_description do
     %p.title
       = f.label :name, "Race Description"

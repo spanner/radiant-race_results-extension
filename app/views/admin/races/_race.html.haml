@@ -5,8 +5,11 @@
         %p
           = link_to race.name, edit_admin_race_url(race)
           = link_to(image('minus'), admin_race_url(race), :class => 'remove', :method => :delete, :title => "Delete #{race.name} and all results", :confirm => "Do you really want to delete the race #{race.name} and all its results?") 
+          %br
           %span.info
-            = truncate race.description, 100
+            = race.distance 
+            miles, 
+            = "#{race.climb}'"
 
     - tbody.instances_cell do
       %td.race_instances

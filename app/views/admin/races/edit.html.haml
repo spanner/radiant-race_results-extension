@@ -10,7 +10,7 @@
       All you need to do here is name and describe the race. The real work is done when you add one or more sets of results.
 
   - main.edit_form do  
-    - form_for :race, :url => admin_races_path, :html => { :method => "put", :multipart => true } do |f|
+    - form_for :race, :url => admin_race_path(@race), :html => { :method => "put", :multipart => true } do |f|
       .form-area
         = render :partial => "form", :locals => { :f => f }
 
