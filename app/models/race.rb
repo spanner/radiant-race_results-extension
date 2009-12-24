@@ -4,6 +4,7 @@ class Race < ActiveRecord::Base
   belongs_to :created_by, :class_name => 'User'
   belongs_to :updated_by, :class_name => 'User'
   has_many :instances, :class_name => 'RaceInstance'
+  has_many :records, :class_name => 'RaceRecord'
 
   validates_presence_of :name, :slug
   validates_uniqueness_of :name, :slug

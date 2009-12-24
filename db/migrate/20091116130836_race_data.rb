@@ -84,7 +84,7 @@ class RaceData < ActiveRecord::Migration
       t.column :position,           :integer
       t.column :race_instance_id,   :integer
       t.column :race_competitor_id, :integer
-      t.column :race_instance_category_id, :integer
+      t.column :race_category_id,   :integer
       t.column :race_club_id,       :integer
       t.column :dibber,             :string
       t.column :started_at,         :datetime
