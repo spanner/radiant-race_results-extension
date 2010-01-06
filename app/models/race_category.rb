@@ -79,7 +79,8 @@ class RaceCategory < ActiveRecord::Base
 protected
   
   def self.normalized_name(name)
-    name.gsub!(/\s/, '')
+    name.gsub!(/\W*/, '')
+    return "M" if name.blank?
     name.upcase!
     case name
     when /M(\d\d)/
