@@ -12,7 +12,11 @@ class RaceRecord < ActiveRecord::Base
   belongs_to :race_performance
 
   def elapsed_time
-    read_attribute(:elapsed_time).to_timecode
+    if s = read_attribute(:elapsed_time)
+      s.to_timecode
+    else
+      ""
+    end
   end
   
   def elapsed_time=(time)

@@ -33,7 +33,11 @@ class RaceCheckpointTime < ActiveRecord::Base
   end
   
   def elapsed_time
-    read_attribute(:elapsed_time).to_timecode
+    if s = read_attribute(:elapsed_time)
+      s.to_timecode
+    else
+      ""
+    end
   end
   
   def elapsed_time=(time)

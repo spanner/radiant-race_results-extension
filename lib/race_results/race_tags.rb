@@ -421,8 +421,8 @@ module RaceResults
     }
     tag 'club' do |tag|
       _get_club(tag)
-      raise TagError, "No club found" unless tag.locals.club
-      tag.expand
+      # raise TagError, "No club found" unless tag.locals.club
+      tag.expand if tag.locals.club
     end
     [:id, :name, :url].each do |field|
       desc %{
@@ -433,7 +433,7 @@ module RaceResults
       }
       tag "club:#{field}" do |tag|
         _get_club(tag)
-        tag.locals.club ||= _get_race_club(tag)
+        tag.locals.club ||= _get_club(tag)
         tag.locals.club.send(field) if tag.locals.club
       end
     end
@@ -715,8 +715,7 @@ module RaceResults
 
     def _get_club(tag)
       return tag.locals.club if tag.locals.club
-      raise TagError, "No club name supplied" unless tag.attr['name']
-      tag.locals.club = RaceClub.find_by_name(tag.attr['name'])
+      tag.locals.club = RaceClub.find_by_name(tag.attr['name']) if tag.attr['name']
     end
 
   end

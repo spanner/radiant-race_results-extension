@@ -1,0 +1,25 @@
+- if @instance.has_results?
+  %table.results
+    %thead
+      = render :partial => 'race_performances/headings'
+    %tbody
+      = render :partial => 'race_performances/performance', :collection => @performances.completed
+      = render :partial => 'race_performances/performance', :collection => @performances.incomplete
+
+- else
+  %p.noresults
+    Not available yet.
+
+- content_for :breadhead do
+  = link_to "Race results", races_url, :class => 'breadhead'
+
+- content_for :title do
+  = @instance.full_name
+  = @club.name
+
+- content_for :introduction do
+  %p
+    There were
+    = @performances.count
+    competitors from
+    = @club.name + ':'

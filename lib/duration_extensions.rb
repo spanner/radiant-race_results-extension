@@ -1,7 +1,7 @@
 module DurationExtensions
 
   # builds a duration object from a string like (but probably shorter than) dd:hh:mm:ss
-  # delimiters can be specified in Radiant::Config[race_results.delimiters]
+  # (or any other non-numeral delimiter will work)
 
   def self.included(base)
     base.class_eval {
@@ -13,8 +13,7 @@ module DurationExtensions
   module ClassMethods
     def parse(timecode)
       return timecode if timecode.is_a? Numeric
-      delimiters = Radiant::Config['race_results.delimiters'] || ':,.'
-      tokens = timecode.split(Regexp.compile("[#{Regexp.escape(delimiters)}]")).map(&:to_i).reverse
+      tokens = timecode.split(/\D+/).map(&:to_i).reverse
       multipliers = [:seconds, :minutes, :hours, :days]
       parts = []
       seconds = tokens.inject(0) {|total, token|

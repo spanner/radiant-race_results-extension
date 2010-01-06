@@ -5,12 +5,13 @@
 
 - render_region :main do |main|
   - main.edit_header do
-    %h1= "New Race"
+    %h1
+      New Race
     %p 
-      All you need to do here is name and describe the race. The real work is done when you add one or more sets of results.
+      This is where you put in the basic information about the race, including general instructions for the competitor. The information you enter here should apply every time the race is run. You can put in more specific information each time the race is run.
 
   - main.edit_form do  
-    - form_for :race, :url => admin_races_path, :html => { :method => "post", :multipart => true } do |f|
+    - form_for :race, @race, :url => admin_races_path, :html => { :method => "post", :multipart => true } do |f|
       .form-area
         = render :partial => "form", :locals => { :f => f }
 

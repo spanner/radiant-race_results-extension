@@ -21,13 +21,26 @@ class RacePage < Page
     url = clean_url(url) if clean
     my_url = self.url
     return false unless url =~ /^#{Regexp.quote(my_url)}(.*)/
-    parts = $1.split('/')
-    if race_slug = parts.shift
-      @race = Race.find_by_slug(race_slug)
-      if instance_slug = parts.shift
-        @race_instance = @race.instances.find_by_slug(instance_slug)
+    race_slug, instance_slug, subset, id = $1.split('/')
+    if race_slug && @race = Race.find_by_slug(race_slug)
+      if instance_slug && @race_instance = @race.instances.find_by_slug(instance_slug)
+        if subset && id && %w{club cat p}.include?(subset)
+          case subset
+          when "club"
+            @club = RaceClub.find(id)
+            @template = 'race_clubs/show'
+          when "cat"
+            @category = RaceCategory.find(id)
+            @template = 'race_categories/show'
+          when 'p'
+            @performance = RacePerformance.find(id)
+            @template = 'race_performances/show'
+          end 
+        else
+          @template = 'race_instances/show'
+        end
       else
-        @race_instance = @race.latest
+        @template = 'races/show'
       end
     end
     self
@@ -40,6 +53,10 @@ class RacePage < Page
       :page => request.params[:page] || 1, 
       :per_page => Radiant::Config['race_results.per_page'] || 100
     }
+  end
+  
+  def render
+    
   end
   
   def race

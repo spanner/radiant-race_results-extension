@@ -1,0 +1,14 @@
+%h1
+  = yield :title
+
+%div.race_list
+  = yield :list
+
+- content_for :title do
+  Results
+
+- content_for :list do
+  %ul.race_list
+  - @race_instances.each do |instance|
+    %li
+      = link_to instance.full_name, race_race_instance_url(instance.race, instance) }

@@ -1,0 +1,10 @@
+- cssclass = f.object.new_record? ? 'adding subform' : 'subform'
+%p{:class => cssclass}
+  = f.label :name, "AKA:"
+  = f.text_field :name, :class => 'alias_name'
+
+  - if f.object.new_record?
+    = link_to_function "cancel", "this.up('.subform').remove()"
+  - else
+    = f.check_box '_delete', { :onclick=>"this.checked ? this.up('.subform').addClassName('deleting') : this.up('.subform').removeClassName('deleting')" , :class => 'alias_delete'}
+    = f.label '_delete', 'delete', :class => 'quiet'

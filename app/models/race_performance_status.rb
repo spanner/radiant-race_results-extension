@@ -40,8 +40,10 @@ class RacePerformanceStatus
     time ||= ""
     if time.seconds > 0   # String.seconds returns 0 for a string that doesn't parse. See DurationExtensions for method.
       self["Finished"] 
-    else
+    elsif self[time]
       self[time]
+    else
+      self["Unknown"]
     end
   end
   

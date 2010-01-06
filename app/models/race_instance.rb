@@ -6,7 +6,6 @@ class RaceInstance < ActiveRecord::Base
   belongs_to :created_by, :class_name => 'User'
   belongs_to :updated_by, :class_name => 'User'
   belongs_to :race
-  has_many :checkpoints, :class_name => 'RaceCheckpoint'
   has_many :performances, :class_name => 'RacePerformance'
   has_many :competitors, :through => :performances, :source => :race_competitor
   has_many :categories, :through => :performances, :source => :race_category, :uniq => true
@@ -16,20 +15,30 @@ class RaceInstance < ActiveRecord::Base
   has_many :successful_competitors, :through => :finishers, :source => :race_competitor
   has_many :unsuccessful_competitors, :through => :non_finishers, :source => :race_competitor
   
-  has_attached_file :results  
-  after_post_process :process_results_file    # this probably ought to move into a paperclip processor
+  object_id_attr :filter, TextFilter
+  has_attached_file :results,
+                    :url => Radiant::Config["race_results.url"] ? Radiant::Config["race_results.url"] : "/:class/:id/:basename:no_original_style.:extension", 
+                    :path => Radiant::Config["race_results.path"] ? Radiant::Config["race_results.path"] : ":rails_root/public/:class/:id/:basename:no_original_style.:extension"
 
-  default_scope :order => 'started_at DESC'
+  after_save :process_results_file
 
   validates_presence_of :name, :slug, :race
   validates_uniqueness_of :slug, :scope => :race_id
   validates_length_of :slug, :maximum => 100, :message => '{{count}}-character limit'
   validates_format_of :slug, :with => %r{^([-_.A-Za-z0-9]*|)$}, :message => 'not URL-friendly'
-
-  object_id_attr :filter, TextFilter
+  default_scope :order => 'started_at DESC'
+  
+  named_scope :with_results, {:conditions => "results_file_name IS NOT NULL"}
+  named_scope :without_results, {:conditions => "results_file_name IS NULL"}
+  named_scope :past, {:conditions => ["started_at <= :when", {:when => Time.now}]}
+  named_scope :future, {:conditions => ["started_at > :when", {:when => Time.now}], :order => "started_at ASC"}
+  
+  def to_param
+    slug
+  end
   
   def full_name
-    "#{race.name}: #{name}"
+    "#{race.name} #{name}"
   end
   
   def path
@@ -49,18 +58,23 @@ class RaceInstance < ActiveRecord::Base
     started_at.to_datetime.strftime("%B %e %Y") if started_at
   end
   
+  def past?
+    started_at <= Time.now
+  end
+  
+  def future?
+    started_at > Time.now
+  end
+  
   def has_results?
     performances.any?
   end
   
-  def checkpoint_before(cp)
-    checkpoints.at(checkpoints.index(cp) - 1) if checkpoints.contain?(cp) and checkpoints.first != cp
+  def checkpoints
+    # we will need to accommodate races whose checkpoints are different with each instance, but for now:
+    race.checkpoints
   end
-
-  def checkpoint_after(cp)
-    checkpoints.at(checkpoints.index(cp) + 1) if checkpoints.contain?(cp) and checkpoints.last != cp
-  end
-  
+    
   def performance_by(competitor)
     
   end
@@ -107,9 +121,11 @@ protected
         performances.destroy_all
         race_data.each do |line|
           runner = normalize_fields(line)
-          runner['time'] ||= "0"
-          club = RaceClub.find_or_create_by_name_or_alias(runner.delete('club'))
-          competitor = RaceCompetitor.find_or_create_by_name_and_race_club_id(runner.delete('name'), club.id)
+          next if runner['name'].blank?
+
+          runner['elapsed_time'] ||= "0"
+          club = RaceClub.find_or_create_by_any_name(runner.delete('club')) unless runner['club'].blank? 
+          competitor = RaceCompetitor.find_or_create_by_name_and_club(runner.delete('name'), club)
           category = RaceCategory.find_or_create_by_normalized_name(runner.delete('category'))
           competitor.update_attribute(:gender, category.gender) unless competitor.gender
           status = RacePerformanceStatus.from_time(runner['elapsed_time'])
@@ -120,12 +136,10 @@ protected
             :elapsed_time => runner.delete('elapsed_time'),
             :status_id => status.id
           })
-          
-          # loop on headers to keep checkpoints in order
+        
           headers.each do |key|
             value = runner[normalize(key)]
-            if value && value.looks_like_duration?
-              cp = checkpoints.find_or_create_by_name(key)
+            if value && value.looks_like_duration? && cp = race.checkpoints.find_by_name(key)
               cp.times.create(:race_performance_id => performance.id, :elapsed_time => value)
             end
           end
@@ -136,6 +150,8 @@ protected
 
   def read_results_file
     CSV.read(results.path)
+  rescue
+    nil
   end
   
   @@field_aliases = {
@@ -153,7 +169,9 @@ protected
   end
   
   def normalize(value)
-    squashed = value.gsub(/\s+/, "_").downcase
+    squashed = value.strip.downcase
+    squashed.gsub!(/\s+/, "_")
+    squashed.gsub!(/\W+/, "")
     @@field_aliases[squashed] || squashed
   end
   

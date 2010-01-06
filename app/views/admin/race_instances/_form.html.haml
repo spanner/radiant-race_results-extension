@@ -65,7 +65,16 @@
         These headings are understood:
         %code name, pos, position, time, start, finish, club, cat, category
       %li
-        Any heading we don't recognise is assumed to be a checkpoint column.
+        Checkpoint times will be recorded if the column heading matches a checkpoint name.
+        - if @race.checkpoints.any?
+          For
+          = @race.name
+          we have these checkpoints: 
+          %br
+          = @race.checkpoints.map { |cp| "<code>#{cp.name}</code>" }.join(", ")
+        - else
+          = @race.name
+          has no checkpoints.
       %li
         Categories will be turned into the standard 
         %code LVxx
@@ -75,7 +84,7 @@
         %code Uxx
         is also understood.
       %li 
-        Times should be recorded as 
+        All times should be recorded as 
         %code hh:mm:ss.
         
   - form.edit_report do

@@ -10,12 +10,18 @@
             = race.distance 
             miles, 
             = "#{race.climb}'"
+            climb
+            - if race.records.any?
+              %br
+              Records:
+              = race.records.map{ |record| "#{record.race_category.name}: #{record.elapsed_time}"}.join(', ')
 
     - tbody.instances_cell do
       %td.race_instances
         %ul.instances
+          - column = 0
           - race.instances.each do |ri|
-            %li
+            %li{:class => (column % 4 == 0) ? "newline" : "floating"}
               = link_to "#{ri.name}", edit_admin_race_race_instance_url(race, ri)
               = link_to("#{image('minus')}", admin_race_race_instance_url(race, ri), :class => 'remove', :method => :delete, :confirm => "really delete #{ri.full_name}?") 
               %br
@@ -25,5 +31,6 @@
                   competitors
                 - else
                   no results yet
-          
-        = link_to("#{image('plus', :alt => 'add results')} add an occasion", new_admin_race_race_instance_url(race)) 
+            - column = column + 1
+        %p.new_instance
+          = link_to("#{image('plus', :alt => 'add results')} add an occasion", new_admin_race_race_instance_url(race)) 

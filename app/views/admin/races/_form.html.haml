@@ -7,7 +7,7 @@
     = @race.errors.full_messages
 
 - render_region :form do |form|
-  - form.edit_title do
+  - form.edit_name do
     %p.title
       = f.label :name, "Race Name"
       = f.text_field :name, :class => 'textbox', :maxlength => 100 
@@ -35,10 +35,26 @@
       %p.climb
         = f.label :climb, "Climb (in feet)"
         = f.text_field :climb, :class => 'textbox'
-
+  
   - form.edit_description do
     %p.title
       = f.label :name, "Race Description"
       = f.text_area "description", :size => '40x8', :class => "textarea" 
       %label{:for => "race_filter_id"} Filter
       = select_tag "race[filter_id]", filter_options_for_select(@race.filter_id), :id => "race_filter_id"
+
+  - form.edit_records do
+    %h2
+      Records
+    %div#records
+      = f.fields_for :records do |rf|
+        = render :partial => 'admin/race_records/record', :locals => {:f => rf}
+    = link_to_new_nested_form "Add a record", f, :records, :partial => 'admin/race_records/record'
+
+  - form.edit_checkpoints do
+    %h2
+      Checkpoints
+    %div#checkpoints
+      = f.fields_for :checkpoints do |cf|
+        = render :partial => 'admin/race_checkpoints/checkpoint', :locals => {:f => cf}
+    = link_to_new_nested_form "Add a checkpoint", f, :checkpoints, :partial => 'admin/race_checkpoints/checkpoint'

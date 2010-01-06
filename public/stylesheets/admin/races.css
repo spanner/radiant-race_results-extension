@@ -95,7 +95,7 @@ p.haserror {
 
 #content .form-area textarea {
   width: 100%;
-  height: 60px;
+  height: 150px;
   border:1px solid #CDC295;
   font-family:Monaco,"Courier New",Courier,monospace;
   font-size:95%;
@@ -103,7 +103,7 @@ p.haserror {
 }
 
 #content .form-area textarea.large {
-  height: 150px;
+  height: 250px;
 }
 
 #content .form-area input.date, #content .form-area input.upload {
@@ -114,8 +114,56 @@ p.haserror {
   margin-top: 20px;
 }
 
-
 #content .form-area span.info {
   font-size: 80%;
   color: #7D796C;
 }
+
+#content .form-area p.record label, #content .form-area p.checkpoint label {
+  margin-left: 10px;
+}
+
+#content .form-area p.record label.quiet, #content .form-area p.checkpoint label.quiet {
+  margin-left: 0;
+  font-weight: lighter;
+}
+
+#content .form-area p.record input, #content .form-area p.record select, #content .form-area p.checkpoint input, #content .form-area p.checkpoint select {
+  border: 1px solid #CDC295;
+  font-family: Monaco,"Courier New",Courier,monospace;
+  font-size: 95%;
+  padding: 4px;
+}
+
+#content .form-area p.record input.record_holder { width: 300px; }
+#content .form-area p.record input.record_year { width: 100px; }
+#content .form-area p.record input.record_time { width: 100px; }
+
+#content .form-area p.checkpoint input.checkpoint_name { width: 300px; }
+#content .form-area p.checkpoint input.checkpoint_location { width: 100px; }
+#content .form-area p.checkpoint input.checkpoint_value { width: 100px; }
+
+#content .form-area p.adding { 
+  color: #063; 
+}
+
+#content .form-area p.adding input, #content .form-area p.adding select { 
+  color: #063; 
+  border: 1px solid #6c9;
+}
+
+#content .form-area p.deleting { 
+  color: #999; 
+  text-decoration: line-through;
+}
+
+#content .form-area p.deleting input, #content .form-area p.deleting select { 
+  color: #999; 
+  border: 1px solid #ccc;
+}
+
+
+
+
+
+

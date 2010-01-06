@@ -1,0 +1,33 @@
+- @races.each do |race|
+  %h2
+    = link_to race.name, race_url(race)
+    %span.headernote
+      = race.distance 
+      miles,
+      = race.climb.to_s + "'"
+
+  %p.race_instances
+    - if next_instance = race.next
+      Next:
+      = link_to next_instance.nice_start_date, race_url(race)
+      %br
+    - if race.instances.with_results.any?
+      Results:
+      = race.instances.with_results.map { |instance| link_to instance.name, race_instance_url(race, instance) }.join(', ')
+
+  %p
+    = truncate_words(race.description, 36)
+
+- content_for :title do
+  Races
+
+- content_for :introduction do
+  - if next_instance = RaceInstance.future.first
+    %p.next_race
+      Next race:
+      %strong
+        = link_to next_instance.race.name, race_url(next_instance.race)
+      on
+      = next_instance.nice_start_date
+      at
+      = next_instance.nice_start_time + "."

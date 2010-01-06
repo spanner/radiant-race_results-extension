@@ -1,0 +1,26 @@
+- include_stylesheet 'admin/races'
+= render_region :top 
+
+%h1 Clubs
+
+%p
+  Clubs are added automatically when they are encountered in a results file. You can check, tweak and combine listings here.
+
+%table#race_clubs.index{:cellspacing=>"0", :border=>"0", :cellpadding=>"0"}
+  %thead
+    %tr
+      - render_region :thead do |thead|
+        - thead.title_header do
+          %th.club 
+            Name
+        - thead.members_header do
+          %th.members 
+            Members
+        - thead.aliases_header do
+          %th.members 
+            Aliases
+          
+  %tbody
+    - @race_clubs.each do |club|
+      = render :partial => 'club', :object => club
+

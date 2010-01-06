@@ -78,7 +78,7 @@ class RaceData < ActiveRecord::Migration
       t.column :created_at,         :datetime
       t.column :updated_at,         :datetime
     end
-    add_index :race_competitors, :name, :unique => true
+    add_index :race_competitors, [:name, :race_club_id]
     
     create_table :race_performances do |t|
       t.column :number,             :integer

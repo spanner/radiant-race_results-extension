@@ -60,6 +60,13 @@ class RacePerformance < ActiveRecord::Base
       :conditions => ["race_category_id in (#{eligible_categories.map{'?'}.join(',')})", *eligible_categories.map(&:id)]
     }
   }
+  
+  # named_scope :by_members_of, lambda {|club|
+  #   club = RaceClub.find_by_name(club) unless club.is_a? RaceClub
+  #   {
+  #     :conditions => ["race_category_id in (#{eligible_categories.map{'?'}.join(',')})", *eligible_categories.map(&:id)]
+  #   }
+  # }
 
   named_scope :quicker_than, lambda { |seconds|
     {
@@ -84,7 +91,8 @@ class RacePerformance < ActiveRecord::Base
   end
 
   def position
-    unless pos = read_attribute(:position)
+    pos = read_attribute(:position)
+    if pos.nil? || pos.blank?
       pos = race_instance.performances.quicker_than(elapsed_time).count + 1
       write_attribute(:position, pos)
     end
@@ -92,7 +100,11 @@ class RacePerformance < ActiveRecord::Base
   end
     
   def elapsed_time
-    read_attribute(:elapsed_time).to_timecode
+    if s = read_attribute(:elapsed_time)
+      s.to_timecode
+    else
+      ""
+    end
   end
   
   def elapsed_time=(time)
@@ -118,7 +130,7 @@ class RacePerformance < ActiveRecord::Base
   end
   
   def prize
-    # report that we won a prize
+    # report what prize was won, if any
   end
   
 protected

@@ -5,6 +5,5 @@ class RaceClubAlias < ActiveRecord::Base
   belongs_to :club, :class_name => 'RaceClub'
 
   validates_presence_of :name
-
 end
 

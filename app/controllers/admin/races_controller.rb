@@ -1,14 +1,13 @@
 class Admin::RacesController < Admin::ResourceController
-  before_filter :get_race, :only => [:edit, :update, :delete]
-  before_filter :make_race, :only => [:new, :create]
+  helper :races
 
 protected
 
-  def get_race
-    @race = Race.find(params[:id])
-  end
-
-  def make_race
-    @race = Race.new(params[:race])
+  def load_model
+    self.model = if params[:id]
+      model_class.find_by_slug(params[:id])
+    else
+      model_class.new
+    end
   end
 end

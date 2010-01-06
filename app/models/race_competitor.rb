@@ -9,5 +9,11 @@ class RaceCompetitor < ActiveRecord::Base
   def club
     race_club
   end
+  
+  def self.find_or_create_by_name_and_club(name="", club=nil)
+    return if name.blank?
+    club_id = club.nil? ? nil : club.id
+    find_or_create_by_name_and_race_club_id(name, club_id)
+  end
 end
 

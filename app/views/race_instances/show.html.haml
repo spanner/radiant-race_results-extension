@@ -1,0 +1,36 @@
+- if @instance.has_results?
+  %table.results
+    %thead
+      = render :partial => 'race_performances/headings'
+    %tbody
+      = render :partial => 'race_performances/performance', :collection => @instance.performances.completed
+      = render :partial => 'race_performances/performance', :collection => @instance.performances.incomplete
+
+- else
+  %p.noresults
+    Not available yet.
+
+- content_for :breadhead do
+  = link_to "Race results", races_url, :class => 'breadhead'
+
+- content_for :title do
+  = @instance.full_name
+  
+- content_for :subtitle do
+  = @race.distance 
+  miles,
+  = @race.climb
+  climb
+
+- content_for :introduction do
+  - if @instance.past?
+    = @instance.filter.filter(@instance.report)
+  - else
+    = @instance.filter.filter(@instance.notes)
+
+- content_for :see_also do
+  - if others = @race.instances.with_results.select{|i| i != @instance}
+    More results:
+    = others.map { |instance| link_to instance.name, race_instance_url(@race, instance) }.join(', ')
+  
+

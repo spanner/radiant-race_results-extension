@@ -1,0 +1,19 @@
+%tr.node.level-1
+  - render_region :tbody do |tbody|
+    - tbody.title_cell do
+      %td.club_name
+        %p
+          = link_to club.name, edit_admin_race_club_url(club)
+
+    - tbody.members_cell do
+      %td.club_members
+        - if club.competitors.any?
+          = club.competitors.count
+        - else
+          \-
+         
+    - tbody.aliases_cell do
+      %td.club_aliases
+        - if club.other_names.any?
+          aka
+          = club.other_names.map(&:name).join(', ')

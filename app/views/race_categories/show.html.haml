@@ -1,0 +1,36 @@
+- if @instance.has_results?
+  %table.results
+    %thead
+      = render :partial => 'race_performances/headings'
+    %tbody
+      = render :partial => 'race_performances/performance', :collection => @performances.completed
+      = render :partial => 'race_performances/performance', :collection => @performances.incomplete
+
+- else
+  %p.noresults
+    Not available yet.
+
+- content_for :breadhead do
+  = link_to "Race results", races_url, :class => 'breadhead'
+
+- content_for :title do
+  = @instance.full_name
+  = @category.name
+
+- content_for :introduction do
+  %p
+    There were
+    = @performances.count
+    people eligible for the
+    = @category.name
+    category:
+
+- content_for :see_also do
+  %h3 
+    More results from 
+    = @instance.full_name
+  %p
+    = link_to("Combined", race_instance_url(@race, @instance)) + ', '
+    = @instance.categories.map { |category| link_to category.name, race_category_url(@race, @instance, category) }.join(', ')
+  
+

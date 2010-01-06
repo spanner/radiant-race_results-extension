@@ -26,6 +26,12 @@ class RaceCategory < ActiveRecord::Base
     }
   }
   
+  default_scope :order => 'name ASC'
+
+  def to_param
+    name
+  end
+
   def self.find_or_create_by_normalized_name(name)
     name = normalized_name(name)
     unless category = find_by_name(name)
@@ -67,6 +73,8 @@ protected
       "LV#{$1}"
     when /WU(\d\d)/
       "LU#{$1}"
+    when "", nil
+      "M"
     else
       name
     end

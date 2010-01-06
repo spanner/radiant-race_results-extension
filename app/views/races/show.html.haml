@@ -1,0 +1,48 @@
+= @race.filter.filter(@race.description)
+
+%div.checkpoints
+  %h2
+    Checkpoints
+  %ul.checkpoints
+    - @race.checkpoints.each do |cp|
+      %li
+        = cp.name
+        %span.info
+          = cp.location
+
+%div.results
+  %h2
+    Results
+  - if @race.instances.with_results.any?
+    %ul.race_instances
+      - @race.instances.with_results.each do |instance|
+        %li
+          = link_to instance.name, race_instance_url(@race, instance)
+  - else
+    %p.noresults
+      None yet
+
+
+- content_for :breadhead do
+  = link_to "Races", races_url, :class => 'breadhead'
+
+- content_for :title do
+  = @race.name
+  
+- content_for :subtitle do
+  = @race.distance 
+  miles,
+  = @race.climb
+  climb
+
+- content_for :introduction do
+  - if next_instance = @race.next
+    %div.future_race
+      %p
+        Next race:
+        %strong
+          = next_instance.nice_start_date + ','
+          at
+          = next_instance.nice_start_time + "."
+
+      = next_instance.filter.filter(next_instance.notes)
