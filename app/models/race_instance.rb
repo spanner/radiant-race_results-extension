@@ -97,7 +97,7 @@ class RaceInstance < ActiveRecord::Base
       perf.competitor
     end
   end
-    
+  
   def top(count=20)
     performances.top(count)
   end
@@ -116,7 +116,6 @@ protected
     if csv_data = read_results_file
       headers = csv_data.shift.map(&:to_s)
       race_data = csv_data.map {|row| row.map {|cell| cell.to_s } }.map {|row| Hash[*headers.zip(row).flatten] } # build AoA and then hash the second level
-      Rails.logger.warn "^^  importing race data: #{race_data.size} lines"
       RaceInstance.transaction do
         performances.destroy_all
         race_data.each do |line|

@@ -18,10 +18,12 @@ class RaceResultsExtension < Radiant::Extension
     map.races '/races', :controller => 'races', :action => 'index'
     map.race '/races/:slug', :controller => 'races', :action => 'show'
     map.results '/results', :controller => 'race_instances', :action => 'index'
+
     map.race_instance '/races/:race_slug/:slug', :controller => 'race_instances', :action => 'show'
+    map.race_club '/races/:race_slug/:slug/club/:club', :controller => 'race_instances', :action => 'show'
+    map.race_category '/races/:race_slug/:slug/cat/:cat', :controller => 'race_instances', :action => 'show'
+
     map.race_performance '/races/:race_slug/:slug/p/:id', :controller => 'race_performances', :action => 'show'
-    map.race_club '/races/:race_slug/:slug/club/:id', :controller => 'race_clubs', :action => 'show'
-    map.race_category '/races/:race_slug/:instance_slug/cat/:slug', :controller => 'race_categories', :action => 'show'
     
     # map.resources :race_clubs
     # map.resources :race_competitors

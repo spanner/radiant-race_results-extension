@@ -1,10 +1,22 @@
 - if @instance.has_results?
+  - if @club || @category
+    %p.subset
+      Showing only 
+      - if @club
+        %strong
+          = @club.name
+      - if @category
+        %strong
+          = @category.name
+      %br
+      = link_to "Show all results.", race_instance_url(@race, @instance)
+      
   %table.results
     %thead
       = render :partial => 'race_performances/headings'
     %tbody
-      = render :partial => 'race_performances/performance', :collection => @instance.performances.completed
-      = render :partial => 'race_performances/performance', :collection => @instance.performances.incomplete
+      = render :partial => 'race_performances/performance', :collection => @performances.completed
+      = render :partial => 'race_performances/performance', :collection => @performances.incomplete, :locals => {:trclass => 'unfinished'}
 
 - else
   %p.noresults
@@ -30,7 +42,11 @@
 
 - content_for :see_also do
   - if others = @race.instances.with_results.select{|i| i != @instance}
-    More results:
-    = others.map { |instance| link_to instance.name, race_instance_url(@race, instance) }.join(', ')
+    .see_also
+      %p
+        More 
+        = @race.name
+        results:
+        = others.map { |instance| link_to instance.name, race_instance_url(@race, instance) }.join(', ')
   
 

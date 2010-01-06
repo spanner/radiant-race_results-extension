@@ -24,7 +24,7 @@ class RacePerformanceStatus
   end
   
   def self.[](value="")
-    value = "Unknown" if value.blank? || value == 0
+    value = "?" if value.blank? || value == 0
     @@statuses.find { |status| status.symbol == value.to_s.downcase.intern || status.has_alias?(value) }
   end
   
@@ -43,16 +43,16 @@ class RacePerformanceStatus
     elsif self[time]
       self[time]
     else
-      self["Unknown"]
+      self["?"]
     end
   end
   
   @@statuses = [
-    RacePerformanceStatus.new(:id => 0,  :name => 'Unknown'),
-    RacePerformanceStatus.new(:id => 10,  :name => 'Retired', :aliases => ['ret'] ),
+    RacePerformanceStatus.new(:id => 0,   :name => '?',   :aliases => ['unknown'] ),
+    RacePerformanceStatus.new(:id => 10,  :name => 'Ret', :aliases => ['retired', 'r']),
     RacePerformanceStatus.new(:id => 20,  :name => 'DNF', :aliases => ['did not finish', 'x']),
-    RacePerformanceStatus.new(:id => 30,  :name => 'Timed out'),
-    RacePerformanceStatus.new(:id => 50, :name => 'Disqualified', :aliases => ['disq', 'dsq']),
+    RacePerformanceStatus.new(:id => 30,  :name => 'TO',  :aliases => ['timed out', 't']),
+    RacePerformanceStatus.new(:id => 50,  :name => 'Dsq', :aliases => ['disqualified', 'disq', 'd']),
     RacePerformanceStatus.new(:id => 100, :name => 'Finished')
   ]
 end

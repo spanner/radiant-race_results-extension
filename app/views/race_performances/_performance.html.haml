@@ -1,4 +1,4 @@
-- trclass = performance.prized? ? 'prized' : performance.finished? ? 'finisher' : 'retired'
+- trclass ||= performance.prized? ? 'prized' : 'finisher'
 
 %tr{:class => trclass}
   %td
@@ -10,12 +10,12 @@
     = link_to performance.name, race_performance_url(@instance.race, @instance, performance)
   %td
     - if performance.club
-      = link_to performance.club.name, race_club_url(@instance.race, @instance, performance.club)
+      = link_to_unless_current performance.club.name, race_club_url(@instance.race, @instance, performance.club)
   %td
-    = link_to performance.race_category.name, race_category_url(@instance.race, @instance, performance.race_category)
+    = link_to_unless_current performance.race_category.name, race_category_url(@instance.race, @instance, performance.race_category)
   %td
     - if performance.finished?
       = performance.elapsed_time
   %td
     - if performance.finished?
-      = performance.prize
+      = performance.prizes
