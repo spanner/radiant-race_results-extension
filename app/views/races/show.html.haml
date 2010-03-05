@@ -12,6 +12,25 @@
 
 %div.results
   %h2
+    Records
+  - if @race.records.any?
+    %ul.race_records
+      - @race.records.each do |record|
+        %li
+          %strong
+            = record.race_category.name + ':'
+            = record.elapsed_time
+          by
+          = record.holder
+          in
+          = record.year
+          
+  - else
+    %p.noresults
+      None yet
+
+%div.results
+  %h2
     Results
   - if @race.instances.with_results.any?
     %ul.race_instances

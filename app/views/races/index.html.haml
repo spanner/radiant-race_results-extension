@@ -26,8 +26,4 @@
     %p.next_race
       Next race:
       %strong
-        = link_to next_instance.race.name, race_url(next_instance.race)
-      on
-      = next_instance.nice_start_date
-      at
-      = next_instance.nice_start_time + "."
+        = link_to "#{next_instance.race.name} on #{next_instance.nice_start_date}", race_instance_url(next_instance.race, next_instance)
