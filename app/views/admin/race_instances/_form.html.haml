@@ -1,5 +1,13 @@
-- include_stylesheet calendar_date_select_stylesheets(:style => 'silver')
-- include_javascript calendar_date_select_javascripts
+- clear_javascripts
+
+- include_javascript "mootools"
+- include_javascript "mootools-more"
+- include_javascript "platform"
+- include_javascript "admin/datepicker"
+- include_javascript "admin/races"
+
+- include_stylesheet "admin/datepicker"
+- include_stylesheet "admin/races"
 
 = render_region :form_top
 
@@ -30,7 +38,7 @@
           %td.label
             = f.label :slug, 'Slug'
           %td.field
-            = f.text_field :slug, :class => 'textbox', :maxlength => 255 
+            = f.text_field :slug, :class => 'textbox slug', :maxlength => 255 
         = render_region :extended_metadata
     %p
       %small
@@ -39,9 +47,9 @@
 
   - form.edit_start do
     %p.start
-      = f.label :start, "Start time and date"
+      = f.label :started_at, "Start time and date"
       %br
-      = f.calendar_date_select :started_at, :class => 'textbox date'
+      = f.text_field :started_at, :class => 'textbox date'
 
   - form.edit_notes do
     %p.start

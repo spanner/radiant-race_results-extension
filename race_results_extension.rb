@@ -3,7 +3,7 @@
 
 class RaceResultsExtension < Radiant::Extension
   version "1.0"
-  description "Makes easy the uploading, analysis and display of race results. Built for fell races but should work for most timed events."
+  description "Makes easy the uploading, analysis and display of race results. Built for fell races but should work for most timed or score events."
   url "http://spanner.org/radiant/race_results"
   
   define_routes do |map|
@@ -40,7 +40,8 @@ class RaceResultsExtension < Radiant::Extension
   end
   
   def activate
-    require 'duration_extensions'
+    require 'duration_extensions'                   # string to duration and vice versa
+    require 'application_controller_extensions'     # adds exclude_stylesheet and exclude_javascript
     Page.send :include, RaceResults::RaceTags
     
     unless defined? admin.race

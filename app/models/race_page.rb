@@ -1,10 +1,6 @@
 class RacePage < Page
   include WillPaginate::ViewHelpers
 
-  class RedirectRequired < StandardError
-    def initialize(message = nil); super end
-  end
-
   description %{ Takes race and race instance names in child position or as parameters and populates the necessary race objects. }
   
   attr_accessor :race, :race_instance
@@ -58,20 +54,12 @@ class RacePage < Page
   def render
     
   end
-  
-  def race
-    @race
-  end
-  
-  def race_instance
-    @race_instance
-  end
-  
+    
   def title
-    if @race_instance
-      @race_instance.full_name
-    elsif @race
-      @race.name
+    if race_instance
+      race_instance.full_name
+    elsif race
+      race.name
     else
       read_attribute(:title)
     end
