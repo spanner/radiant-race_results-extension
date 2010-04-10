@@ -12,6 +12,7 @@ class RaceResultsExtension < Radiant::Extension
         race.resources :race_instances, :has_many => [:race_performances]
       end
       admin.resources :race_clubs
+      admin.resources :race_competitors
     end
     
     # public interface is read-only and uses slugs for url-friendliness (and seo)
@@ -30,8 +31,7 @@ class RaceResultsExtension < Radiant::Extension
   end
   
   extension_config do |config|
-    # config.gem 'paperclip', :source => 'http://gemcutter.org'
-    
+    config.gem 'paperclip', :source => 'http://gemcutter.org'
     config.after_initialize do
       ActiveSupport::Inflector.inflections do |inflect|
         inflect.singular /(alias)$/i, 'alias'
@@ -41,7 +41,6 @@ class RaceResultsExtension < Radiant::Extension
   
   def activate
     require 'duration_extensions'                   # string to duration and vice versa
-    require 'application_controller_extensions'     # adds exclude_stylesheet and exclude_javascript
     Page.send :include, RaceResults::RaceTags
     
     unless defined? admin.race
@@ -49,17 +48,16 @@ class RaceResultsExtension < Radiant::Extension
       admin.race = Radiant::AdminUI.load_default_race_regions
       admin.race_instance = Radiant::AdminUI.load_default_race_instance_regions
       admin.race_club = Radiant::AdminUI.load_default_race_club_regions
+      admin.race_competitor = Radiant::AdminUI.load_default_race_competitor_regions
     end
     
-    admin.tabs.add "Races", "/admin/races", :after => "Layouts", :visibility => [:all]
-    admin.tabs['Races'].add_link('races', '/admin/races')
-    admin.tabs['Races'].add_link('categories', '/admin/race_categories')
-    admin.tabs['Races'].add_link('competitors', '/admin/race_competitors')
-    admin.tabs['Races'].add_link('clubs', '/admin/race_clubs')
+    tab("Races") do
+      add_item "Races", "/admin/races"
+      add_item 'Competitors', '/admin/race_competitors'
+      add_item 'Clubs', '/admin/race_clubs'
+    end
   end
   
   def deactivate
-    admin.tabs.remove "Races"
   end
-  
 end

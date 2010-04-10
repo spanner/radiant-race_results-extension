@@ -1,0 +1,144 @@
+table.index 
+  td.race_name
+    :font-size 115%
+    :font-weight bold
+    :vertical-align top
+    a
+      :color black
+      :text-decoration none
+
+  td.race_instances
+    :font-size 90%
+    :vertical-align top
+    ul.instances
+      :list-style square
+      :padding-left 0
+      li
+        :margin-bottom 6px
+        a
+          :font-size 115%
+          :font-weight bold
+          :text-decoration none
+      li.floating
+        :float left
+
+a.remove
+  :font-weight bold
+  :color #c00
+  :text-decoration none
+
+span.formnote, span.info
+    :color #666
+    :font-size 85%
+
+#content .form-area p.body
+  :margin-top 20px
+
+ul.help
+  :list-style square
+  :color #666
+  :font-size 85%
+
+  code
+    :color #c00
+    :font-size 115%
+
+p.haserror
+  :border-left 4px solid #c00
+  :margin-left -16px
+  :padding-left 12px
+  :color #c00 !important
+
+
+#content .form-area
+  div.leftcolumn
+    :width 48%
+    :margin-right 2%
+    :float left
+
+  div.rightcolumn
+    :width 48%
+    :float left
+    :margin 0
+
+  .title label
+    :display inline
+
+  .textbox
+    :width 100%
+    :border 1px solid #CDC295
+    :font-family Monaco,"Courier New",Courier,monospace
+    :font-size 95%
+    :padding 4px
+
+  textarea
+    :width 100%
+    :height 150px
+    :border 1px solid #CDC295
+    :font-family Monaco,"Courier New",Courier,monospace
+    :font-size 95%
+    :padding 4px
+
+  textarea.large
+    :height 250px
+
+  input.date, input.upload
+    :width 300px
+
+  p.buttons
+    :margin-top 20px
+
+  span.info
+    :font-size 80%
+    :color #7D796C
+
+  p
+    &.record label, &.checkpoint label
+      :margin-left 10px
+
+    &.record label.quiet, &.checkpoint label.quiet
+      :margin-left 0
+      :font-weight lighter
+
+    &.record
+      input, select
+        :border 1px solid #CDC295
+        :font-family Monaco,"Courier New",Courier,monospace
+        :font-size 95%
+        :padding 4px
+
+    &.checkpoint
+      input, select
+        :border 1px solid #CDC295
+        :font-family Monaco,"Courier New",Courier,monospace
+        :font-size 95%
+        :padding 4px
+
+    &.record input
+      &.record_holder
+        :width 300px
+
+      &.record_year, &.record_time
+        :width 100px
+
+    &.checkpoint input
+      &.checkpoint_name
+        :width 300px
+
+      &.checkpoint_location, &.checkpoint_value
+        :width 100px
+
+    &.adding
+      :color #063
+
+      input, select
+        :color #063
+        :border 1px solid #6c9
+
+    &.deleting
+      :color #999
+      :text-decoration line-through
+
+      input, select
+        :color #999
+        :border 1px solid #ccc

@@ -21,7 +21,7 @@
         %ul.instances
           - column = 0
           - race.instances.each do |ri|
-            %li{:class => (column % 4 == 0) ? "newline" : "floating"}
+            %li
               = link_to "#{ri.name}", edit_admin_race_race_instance_url(race, ri)
               = link_to("#{image('minus')}", admin_race_race_instance_url(race, ri), :class => 'remove', :method => :delete, :confirm => "really delete #{ri.full_name}?") 
               %br

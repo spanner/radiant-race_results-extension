@@ -1,0 +1,27 @@
+- include_stylesheet 'admin/races'
+
+#competitors_table.outset      
+  %table#race_competitors.index{:cellspacing=>"0", :border=>"0", :cellpadding=>"0"}
+    %thead
+      %tr
+        - render_region :thead do |thead|
+          - thead.title_header do
+            %th.competitor 
+              Name
+          - thead.club_header do
+            %th.club
+              Club
+          - thead.races_header do
+            %th.races 
+              Races
+          
+    %tbody
+      - @race_competitors.each do |comp|
+        = render :partial => 'competitor', :object => comp
+
+- render_region :bottom do |bottom|
+  - bottom.buttons do
+    #actions
+      = will_paginate @race_competitors
+      %ul
+        %li= link_to image('plus') + " " + "new competitor", new_admin_race_competitor_url

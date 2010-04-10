@@ -6,7 +6,7 @@ class RacesController < ApplicationController
   end
   
   def index
-    @races = Race.find(:all)
+    @races = Race.all.paginated(pagination_options)
   end
 
 end

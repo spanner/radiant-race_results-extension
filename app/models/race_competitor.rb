@@ -5,6 +5,7 @@ class RaceCompetitor < ActiveRecord::Base
   belongs_to :reader
   belongs_to :race_club#, :class_name => 'RaceClub'
   has_many :performances, :class_name => 'RacePerformance'
+  default_scope :order => 'name ASC'
   
   def club
     race_club

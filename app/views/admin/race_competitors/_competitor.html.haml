@@ -1,0 +1,14 @@
+%tr.node.level-1
+  - render_region :tbody do |tbody|
+    - tbody.title_cell do
+      %td.competitor_name
+        %p
+          = link_to competitor.name, edit_admin_race_competitor_url(competitor)
+
+    - tbody.club_cell do
+      %td.competitor_club
+        = competitor.club ? competitor.club.name : "unattached"
+         
+    - tbody.races_cell do
+      %td.competitor_races
+        = competitor.performances.count

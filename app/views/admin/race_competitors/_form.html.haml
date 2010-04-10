@@ -1,0 +1,21 @@
+= render_region :form_top
+
+- if @race_club.errors.any?
+  %p.haserror
+    Sorry: there were problems:
+    %br
+    = @race_club.errors.full_messages
+
+- render_region :form do |form|
+  - form.edit_name do
+    %p.title
+      = f.label :name, "Displayed Name"
+      = f.text_field :name, :class => 'textbox', :maxlength => 100 
+
+  - form.edit_aliases do
+    %h2
+      Aliases and abbreviations
+    %div#other_names
+      = f.fields_for :other_names do |af|
+        = render :partial => 'admin/race_club_aliases/race_club_alias', :locals => {:f => af}
+    = link_to_new_nested_form "Add an alias", f, :other_names, :partial => 'admin/race_club_aliases/race_club_alias'
