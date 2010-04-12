@@ -7,7 +7,7 @@
     - else
       = performance.status
   %td
-    = link_to performance.name, race_performance_url(@instance.race, @instance, performance)
+    = performance.name
   %td
     - if performance.club
       = link_to_unless_current performance.club.name, race_club_url(@instance.race, @instance, performance.club)
