@@ -1,5 +1,5 @@
 class RaceInstancesController < ApplicationController
-  radiant_layout "BCR Races"
+  radiant_layout { |controller| controller.layout_for :races }
   before_filter :get_race, :only => :show
 
   def show
