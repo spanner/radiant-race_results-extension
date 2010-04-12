@@ -1,13 +1,9 @@
-- clear_javascripts
-
-- include_javascript "mootools"
-- include_javascript "mootools-more"
-- include_javascript "platform"
-- include_javascript "admin/datepicker"
-- include_javascript "admin/races"
-
-- include_stylesheet "admin/datepicker"
-- include_stylesheet "admin/races"
+- include_stylesheet "admin/event_calendar"
+- include_javascript "admin/event_calendar"
+- if defined? TinyMceFilter
+  - include_javascript "tiny_mce/tiny_mce"
+  - include_javascript "tiny_mce/tiny_mce_settings"
+  - include_javascript "tiny_mce/application"
 
 = render_region :form_top
 
@@ -49,7 +45,7 @@
     %p.start
       = f.label :started_at, "Start time and date"
       %br
-      = f.text_field :started_at, :class => 'textbox date'
+      = f.text_field :started_at, :class => 'textbox date time'
 
   - form.edit_notes do
     %p.start
