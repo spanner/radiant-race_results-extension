@@ -18,15 +18,15 @@ describe RaceClub do
   
   describe "with aliases" do
     it "should be retrievable by name or alias" do
-      RaceClub.find_by_name_or_alias('Black Combe').should == race_clubs(:black_combe)
-      RaceClub.find_by_name_or_alias('BCR').should == race_clubs(:black_combe)
-      RaceClub.find_by_name_or_alias('Black Combe Runners').should == race_clubs(:black_combe)
-      RaceClub.find_by_name_or_alias('camel').should be_nil
+      RaceClub.find_by_any_name('Black Combe').should == race_clubs(:black_combe)
+      RaceClub.find_by_any_name('BCR').should == race_clubs(:black_combe)
+      RaceClub.find_by_any_name('Black Combe Runners').should == race_clubs(:black_combe)
+      RaceClub.find_by_any_name('camel').should be_nil
     end
 
     it "should be find_or_creatable by name or alias" do
-      RaceClub.find_or_create_by_name_or_alias('BCR').should == race_clubs(:black_combe)
-      RaceClub.find_or_create_by_name_or_alias('CFR').should be_kind_of(RaceClub)
+      RaceClub.find_or_create_by_any_name('BCR').should == race_clubs(:black_combe)
+      RaceClub.find_or_create_by_any_name('CFR').should be_kind_of(RaceClub)
     end
   end
 end

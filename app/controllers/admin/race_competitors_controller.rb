@@ -3,10 +3,6 @@ class Admin::RaceCompetitorsController < Admin::ResourceController
   before_filter :get_competitor, :only => [:edit, :update, :delete]
   before_filter :make_competitor, :only => [:new, :create]
 
-  def load_models
-    self.models = model_class.paginate(pagination_options)
-  end
-
 protected
 
   def get_competitor

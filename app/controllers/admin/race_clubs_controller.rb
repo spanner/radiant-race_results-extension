@@ -3,10 +3,6 @@ class Admin::RaceClubsController < Admin::ResourceController
   before_filter :get_club, :only => [:edit, :update, :delete]
   before_filter :make_club, :only => [:new, :create]
 
-  def load_models
-    self.models = model_class.paginate(pagination_options)
-  end
-
 protected
 
   def get_club

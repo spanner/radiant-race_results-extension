@@ -1,12 +1,12 @@
 class RacesController < ApplicationController
-  radiant_layout { |controller| controller.layout_for :races }
+  radiant_layout "BCR Races"
 
   def show
     @race = Race.find_by_slug(params[:slug])
   end
   
   def index
-    @races = Race.all
+    @races = Race.all.paginate(pagination_parameters)
   end
 
 end

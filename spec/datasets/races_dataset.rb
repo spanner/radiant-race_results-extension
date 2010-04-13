@@ -40,11 +40,11 @@ class RacesDataset < Dataset::Base
       end
     end
     create_race "Dunnerdale" do
+      create_checkpoint "Knott"
+      create_checkpoint "Raven Crag"
+      create_checkpoint "Stickle Pike"
+      create_checkpoint "Great Stickle"
       create_instance "2007", :started_at => DateTime.civil(2009, 11, 14, 12, 0, 0) do
-        create_checkpoint "Knott"
-        create_checkpoint "Raven Crag"
-        create_checkpoint "Stickle Pike"
-        create_checkpoint "Great Stickle"
         create_performance :race_competitor_id => race_competitor_id(:ben_abdelnoor), :category => race_categories(:m), :elapsed_time => '41:41' do
           create_checkpoint_time "9:12", :race_checkpoint_id => race_checkpoint_id(:knott)
           create_checkpoint_time "18:12", :race_checkpoint_id => race_checkpoint_id(:raven_crag)
@@ -142,12 +142,12 @@ class RacesDataset < Dataset::Base
         :name => name,
         :description => "Checkpoint description",
         :location => "SD555555",
-        :race_instance_id => @race_instance_id
+        :race_id => @race_id
       }.update(attributes)
       attributes[:site_id] = site_id(:test) if defined? Site
       create_record :race_checkpoint, symbol, attributes
     end
-    
+
     def create_performance(attributes={})
       symbol = make_unique_id(:race_performance)
       attributes[:race_instance_id] ||= @race_instance_id
@@ -159,7 +159,7 @@ class RacesDataset < Dataset::Base
         yield
       end
     end
-    
+
     def create_checkpoint_time(time, attributes={})
       symbol = make_unique_id(:checkpoint_time)
       attributes[:elapsed_time] = time

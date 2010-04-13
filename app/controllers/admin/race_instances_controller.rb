@@ -1,8 +1,4 @@
 class Admin::RaceInstancesController < Admin::ResourceController
-
-  def load_models
-    self.models = model_class.paginate(pagination_options)
-  end
   
 protected
 

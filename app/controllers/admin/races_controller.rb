@@ -1,10 +1,6 @@
 class Admin::RacesController < Admin::ResourceController
   helper :races
 
-  def load_models
-    self.models = model_class.paginate(pagination_options)
-  end
-
 protected
 
   def load_model
