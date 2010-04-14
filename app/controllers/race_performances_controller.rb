@@ -1,5 +1,6 @@
 class RacePerformancesController < ApplicationController
   radiant_layout { |controller| controller.layout_for :races }
+  no_login_required
   before_filter :get_race, :only => :show
 
   def show
