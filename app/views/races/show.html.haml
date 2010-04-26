@@ -20,9 +20,9 @@
   - else 
   %p No checkpoints defined.
       
-- if race.map_asset
+- if @race.map_asset
   %p
-    = link_to "Download map", race.map_asset.thumbnail('original'), :class => 'racemap'
+    = link_to "Download map", @race.map_asset.thumbnail('original'), :class => 'racemap'
 
 %div.results
   %h2
