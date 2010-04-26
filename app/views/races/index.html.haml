@@ -1,29 +1,31 @@
 - @races.each do |race|
-  %h2
-    = link_to race.name, race_url(race)
-    %span.headernote
-      = race.distance 
-      miles,
-      = race.climb.to_s + "'"
-      - if race.map_asset
-        = link_to "map", race.map_asset.thumbnail('original')
+  .race
+  
+    %h2
+      = link_to race.name, race_url(race)
+      %span.headernote
+        = race.distance 
+        miles,
+        = race.climb.to_s + "'"
 
-  .race_description
-    %p.race_instances
-      - if next_instance = race.next
-        Next:
-        = link_to next_instance.nice_start_date, race_url(race)
-        %br
-      - if race.instances.with_results.any?
-        Results:
-        = race.instances.with_results.map { |instance| link_to instance.name, race_instance_url(race, instance) }.join(', ')
+    - if race.picture_asset
+      .race_illustration
+        = image_tag race.picture_asset.thumbnail(:grid_4)
 
-    %p
-      = truncate_words(race.description, 36)
+    .race_description
+      %p.race_instances
+        - if next_instance = race.next
+          Next:
+          = link_to next_instance.nice_start_date, race_url(race)
+          %br
+        - if race.instances.with_results.any?
+          Results:
+          = race.instances.with_results.map { |instance| link_to instance.name, race_instance_url(race, instance) }.join(', ')
+        - if race.map_asset
+          = link_to "Download map", race.map_asset.thumbnail('original'), :class => 'racemap'
 
-  - if race.picture_asset
-    .race_illustration
-      = image_tag race.picture_asset.thumbnail(:grid_3)
+      %p
+        = truncate_words(race.description, 36)
 
 - content_for :title do
   Races

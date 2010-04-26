@@ -1,15 +1,26 @@
-= @race.filter.filter(@race.description)
+- if race.picture_asset
+  .illustration
+    = image_tag race.picture_asset.thumbnail(:grid_4)
 
-- if @race.checkpoints.any?
-  %div.checkpoints
-    %h2
-      Checkpoints
+= @race.description
+
+%div.checkpoints
+  %h2
+    Checkpoints
+
+  - if @race.checkpoints.any?
     %ul.checkpoints
       - @race.checkpoints.each do |cp|
         %li
           = cp.name
           %span.info
             = cp.location
+  - else 
+  %p No checkpoints defined.
+      
+- if race.map_asset
+  %p
+    = link_to "Download map", race.map_asset.thumbnail('original'), :class => 'racemap'
 
 %div.results
   %h2
