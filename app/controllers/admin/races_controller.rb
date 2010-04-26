@@ -1,6 +1,26 @@
 class Admin::RacesController < Admin::ResourceController
   helper :races
 
+  def update
+    Rails.logger.warn "updating with #{params[model_symbol].inspect}"
+    model.update_attributes!(params[model_symbol])
+    response_for :update
+  end
+
+  def continue_url(options)
+    options[:redirect_to] || (params[:continue] ? {:action => 'edit', :id => model.slug} : {:action => "index"})
+  end
+
+  def load_model
+    Rails.logger.warn "loading model with id #{params[:id].inspect}"
+    
+    self.model = if params[:id]
+      model_class.find(params[:id])
+    else
+      model_class.new
+    end
+  end
+
 protected
 
   def load_model
@@ -10,4 +30,6 @@ protected
       model_class.new
     end
   end
+  
+  
 end

@@ -4,10 +4,18 @@ class Race < ActiveRecord::Base
   belongs_to :created_by, :class_name => 'User'
   belongs_to :updated_by, :class_name => 'User'
   has_many :instances, :class_name => 'RaceInstance'
+
   has_many :records, :class_name => 'RaceRecord'
   accepts_nested_attributes_for :records, :allow_destroy => true
+
   has_many :checkpoints, :class_name => 'RaceCheckpoint'
   accepts_nested_attributes_for :checkpoints, :allow_destroy => true
+  
+  belongs_to :picture_asset, :class_name => 'Asset'
+  accepts_nested_attributes_for :picture_asset, :allow_destroy => true
+
+  belongs_to :map_asset, :class_name => 'Asset'
+  accepts_nested_attributes_for :map_asset, :allow_destroy => true
 
   validates_presence_of :name, :slug
   validates_uniqueness_of :name, :slug

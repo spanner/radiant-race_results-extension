@@ -1,3 +1,9 @@
+- include_stylesheet 'admin/races' 
+- if defined? TinyMceFilter
+  - include_javascript "tiny_mce/tiny_mce"
+  - include_javascript "tiny_mce/tiny_mce_settings"
+  - include_javascript "tiny_mce/application"
+
 = render_region :form_top
 
 - if @race.errors.any?
@@ -6,55 +12,71 @@
     %br
     = @race.errors.full_messages
 
-- render_region :form do |form|
-  - form.edit_name do
-    %p.title
-      = f.label :name, "Race Name"
-      = f.text_field :name, :class => 'textbox', :maxlength => 100 
+.container_12
 
-  - form.edit_metadata do
-    #extended-metadata{ :class => "row", :style => "display: none" }
-      %table.fieldset{ :cellpadding => "0", :cellspacing => "0", :border => "0" }
-        %tr
-          %td.label
-            = f.label :slug, 'Slug'
-          %td.field
-            = f.text_field :slug, :class => 'textbox slug', :maxlength => 255 
-        = render_region :extended_metadata
-    %p
-      %small
-        %a{ :id => "more-extended-metadata", :href => "#", :onclick => "#{toggle_javascript_for('extended-metadata')}; return false;" } More
-        %a{ :id => "less-extended-metadata", :href => "#", :onclick => "#{toggle_javascript_for('extended-metadata')}; return false;", :style => "display: none" } Less
+  - render_region :form do |form|
+    - form.edit_name do
+      %p.title
+        = f.label :name, "Race Name"
+        = f.text_field :name, :class => 'textbox', :maxlength => 100 
 
-  - form.edit_distance do
-    %div.leftcolumn
+    - form.edit_metadata do
+      %p.slug
+        = f.label :name, "slug"
+        = f.text_field :slug, :class => 'textbox', :maxlength => 100 
+
+    - form.edit_distance do
       %p.distance
         = f.label :distance, "Distance (in miles)"
         = f.text_field :distance, :class => 'textbox'
-    %div.rightcolumn
       %p.climb
         = f.label :climb, "Climb (in feet)"
         = f.text_field :climb, :class => 'textbox'
   
-  - form.edit_description do
-    %p.title
-      = f.label :name, "Race Description"
-      = f.text_area "description", :size => '40x8', :class => "textarea" 
-      %label{:for => "race_filter_id"} Filter
-      = select_tag "race[filter_id]", filter_options_for_select(@race.filter_id), :id => "race_filter_id"
+    - form.edit_description do
+      %p.description
+        - if defined? TinyMceFilter
+          = link_to image('mce', :alt=> 'toolbar icon'), '#', :class => 'toggleMCE', :rel => 'toggle[race_description]'
+        = f.label :name, "Race Description"
+        = f.text_area "description", :size => '40x8', :class => "textarea" 
 
-  - form.edit_records do
-    %h2
-      Records
-    %div#records
-      = f.fields_for :records do |rf|
-        = render :partial => 'admin/race_records/record', :locals => {:f => rf}
-    = link_to_new_nested_form "Add a record", f, :records, :partial => 'admin/race_records/record'
+    - form.edit_attachments do
+      #attachments
+        %p.map
+          - @race.build_map_asset unless @race.map_asset
+          - f.fields_for :map_asset do |mf|
+            = mf.label :asset, "Map"
+            = mf.file_field :asset, :class => ''
+          - unless @race.map_asset.new_record?
+            %br
+            = image_tag @race.map_asset.thumbnail(:icon)
+            to replace the file
+            %br
+            = @race.map_asset.asset_file_name
+        %p.illustration
+          - @race.build_picture_asset unless @race.picture_asset
+          - f.fields_for :picture_asset do |pf|
+            = pf.label :asset, "Picture"
+            = pf.file_field :asset, :class => ''
+          - unless @race.picture_asset.new_record?
+            %br
+            = image_tag @race.picture_asset.thumbnail(:icon)
+            to replace the file
+            %br
+            = @race.picture_asset.asset_file_name
 
-  - form.edit_checkpoints do
-    %h2
-      Checkpoints
-    %div#checkpoints
-      = f.fields_for :checkpoints do |cf|
-        = render :partial => 'admin/race_checkpoints/checkpoint', :locals => {:f => cf}
-    = link_to_new_nested_form "Add a checkpoint", f, :checkpoints, :partial => 'admin/race_checkpoints/checkpoint'
+    - form.edit_records do
+      %div#records
+        %h2 Records
+        %p
+          = link_to_new_nested_form "Add a record", f, :records, :partial => 'admin/race_records/record'
+        - f.fields_for :records do |rf|
+          = render :partial => 'admin/race_records/record', :locals => {:f => rf}
+
+    - form.edit_checkpoints do
+      %div#checkpoints
+        %h2 Checkpoints
+        %p
+          = link_to_new_nested_form "Add a checkpoint", f, :checkpoints, :partial => 'admin/race_checkpoints/checkpoint'
+        - f.fields_for :checkpoints do |cf|
+          = render :partial => 'admin/race_checkpoints/checkpoint', :locals => {:f => cf}

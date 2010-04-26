@@ -31,7 +31,7 @@ class RaceResultsExtension < Radiant::Extension
   end
   
   extension_config do |config|
-    config.gem 'paperclip', :source => 'http://gemcutter.org'
+    config.extension 'paperclipped'
     config.after_initialize do
       ActiveSupport::Inflector.inflections do |inflect|
         inflect.singular /(alias)$/i, 'alias'

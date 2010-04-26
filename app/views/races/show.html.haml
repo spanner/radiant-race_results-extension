@@ -1,14 +1,15 @@
 = @race.filter.filter(@race.description)
 
-%div.checkpoints
-  %h2
-    Checkpoints
-  %ul.checkpoints
-    - @race.checkpoints.each do |cp|
-      %li
-        = cp.name
-        %span.info
-          = cp.location
+- if @race.checkpoints.any?
+  %div.checkpoints
+    %h2
+      Checkpoints
+    %ul.checkpoints
+      - @race.checkpoints.each do |cp|
+        %li
+          = cp.name
+          %span.info
+            = cp.location
 
 %div.results
   %h2

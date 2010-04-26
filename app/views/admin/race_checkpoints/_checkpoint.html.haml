@@ -1,13 +1,16 @@
 - with_value ||= false
 - cssclass = f.object.new_record? ? 'adding subform' : 'subform'
-%p{:class => cssclass}
-  = f.label :name, "Name"
-  = f.text_field :name, :class => 'checkpoint_name'
-  = f.label :location, "Location"
-  = f.text_field :location, :class => 'checkpoint_location'
-  - if with_value
-    = f.label :value, "Value"
-    = f.text_field :value, :class => 'checkpoint_value'
+%div{:class => cssclass}
+  .name
+    = f.label :name, "Checkpoint Name"
+    = f.text_field :name, :class => 'textbox'
+  .location
+    = f.label :location, "Location"
+    = f.text_field :location, :class => 'textbox'
+  .value
+    - if with_value
+      = f.label :value, "Value"
+      = f.text_field :value, :class => 'textbox'
 
   - if f.object.new_record?
     = link_to_function "cancel", "this.up('.subform').remove()"
