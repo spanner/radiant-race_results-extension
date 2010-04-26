@@ -1,5 +1,8 @@
 - @races.each do |race|
   .race
+    - if race.picture_asset
+      .race_illustration
+        = image_tag(race.picture_asset.thumbnail(:grid_3))
   
     %h2
       = link_to race.name, race_url(race)
@@ -7,10 +10,6 @@
         = race.distance 
         miles,
         = race.climb.to_s + "'"
-
-    - if race.picture_asset
-      .race_illustration
-        = image_tag(race.picture_asset.thumbnail(:grid_4))
 
     .race_description
       %p.race_instances
@@ -21,6 +20,7 @@
         - if race.instances.with_results.any?
           Results:
           = race.instances.with_results.map { |instance| link_to instance.name, race_instance_url(race, instance) }.join(', ')
+          %br
         - if race.map_asset
           = link_to "Download map", race.map_asset.thumbnail('original'), :class => 'racemap'
 
