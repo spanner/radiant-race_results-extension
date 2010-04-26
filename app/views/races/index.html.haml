@@ -2,16 +2,16 @@
   .race
     - if race.picture_asset
       .race_illustration
-        = image_tag(race.picture_asset.thumbnail(:grid_3))
+        = link_to image_tag(race.picture_asset.thumbnail(Radiant::Config['race_results.race_illustration_size'] || :grid_3)), race_url(race)
   
-    %h2
-      = link_to race.name, race_url(race)
-      %span.headernote
-        = race.distance 
-        miles,
-        = race.climb.to_s + "'"
-
     .race_description
+      %h2
+        = link_to race.name, race_url(race)
+        %span.headernote
+          = race.distance 
+          miles,
+          = race.climb.to_s + "'"
+
       %p.race_instances
         - if next_instance = race.next
           Next:
