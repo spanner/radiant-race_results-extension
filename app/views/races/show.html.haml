@@ -1,7 +1,9 @@
-- if race.picture_asset
+- if @race.picture_asset
   .illustration
-    = image_tag race.picture_asset.thumbnail(:grid_4)
-
+    = image_tag @race.picture_asset.thumbnail(:grid_4)
+    %p.caption
+      = @race.picture_asset.caption
+    
 = @race.description
 
 %div.checkpoints
