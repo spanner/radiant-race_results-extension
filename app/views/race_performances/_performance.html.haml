@@ -1,21 +1,21 @@
 - trclass ||= performance.prized? ? 'prized' : 'finisher'
 
 %tr{:class => trclass}
-  %td
+  %td.pos
     - if performance.finished?
       = performance.position
     - else
       = performance.status
-  %td
+  %td.name
     = performance.name
-  %td
+  %td.club
     - if performance.club
       = link_to_unless_current performance.club.name, race_club_url(@instance.race, @instance, performance.club)
-  %td
+  %td.cat
     = link_to_unless_current performance.race_category.name, race_category_url(@instance.race, @instance, performance.race_category)
-  %td
+  %td.time
     - if performance.finished?
       = performance.elapsed_time
-  %td
+  %td.prizes
     - if performance.finished?
       = performance.prizes

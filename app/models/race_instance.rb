@@ -120,6 +120,7 @@ protected
         performances.destroy_all
         race_data.each do |line|
           runner = normalize_fields(line)
+          runner['name'] = "#{runner['forename']} #{runner['surname']}" if runner['name'].blank?
           next if runner['name'].blank?
 
           runner['elapsed_time'] ||= "0"
@@ -157,7 +158,10 @@ protected
     'cat' => 'category',
     'time' => 'elapsed_time',
     'finish' => 'elapsed_time',
-    'pos' => 'position'
+    'pos' => 'position',
+    'last_name' => 'surname',
+    'first_name' => 'forename',
+    'christian_name' => 'forename'
   }
   
   def normalize_fields(line)

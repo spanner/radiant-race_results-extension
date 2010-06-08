@@ -1,4 +1,5 @@
 class RacesController < ApplicationController
+  include Radiant::Pagination::Controller
   radiant_layout { |controller| controller.layout_for :races }
   no_login_required
 

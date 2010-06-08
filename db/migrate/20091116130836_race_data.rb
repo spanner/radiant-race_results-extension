@@ -32,7 +32,7 @@ class RaceData < ActiveRecord::Migration
     # this ought to be suitable for score courses too
     
     create_table :race_checkpoints do |t|
-      t.column :race_instance_id,   :integer
+      t.column :race_id,            :integer
       t.column :position,           :integer
       t.column :name,               :string
       t.column :value,              :integer

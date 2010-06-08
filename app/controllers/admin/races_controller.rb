@@ -1,8 +1,8 @@
 class Admin::RacesController < Admin::ResourceController
+  paginate_models
   helper :races
 
   def update
-    Rails.logger.warn "updating with #{params[model_symbol].inspect}"
     model.update_attributes!(params[model_symbol])
     response_for :update
   end

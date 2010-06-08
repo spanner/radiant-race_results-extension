@@ -1,4 +1,5 @@
 class Admin::RaceClubsController < Admin::ResourceController
+  paginate_models
   helper :races
   before_filter :get_club, :only => [:edit, :update, :delete]
   before_filter :make_club, :only => [:new, :create]

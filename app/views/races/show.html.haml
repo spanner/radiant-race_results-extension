@@ -6,6 +6,18 @@
     
 = @race.description
 
+%div.results
+  %h2
+    Results
+  - if @race.instances.with_results.any?
+    %ul.race_instances
+      - @race.instances.with_results.each do |instance|
+        %li
+          = link_to instance.name, race_instance_url(@race, instance)
+  - else
+    %p.noresults
+      None yet
+
 %div.checkpoints
   %h2
     Checkpoints
@@ -24,7 +36,7 @@
   %p
     = link_to "Download map", @race.map_asset.thumbnail('original'), :class => 'racemap'
 
-%div.results
+%div.records
   %h2
     Records
   - if @race.records.any?
@@ -43,18 +55,6 @@
     %p.noresults
       None yet
 
-%div.results
-  %h2
-    Results
-  - if @race.instances.with_results.any?
-    %ul.race_instances
-      - @race.instances.with_results.each do |instance|
-        %li
-          = link_to instance.name, race_instance_url(@race, instance)
-  - else
-    %p.noresults
-      None yet
-
 
 - content_for :breadhead do
   = link_to "Races", races_url, :class => 'breadhead'
@@ -62,11 +62,10 @@
 - content_for :title do
   = @race.name
   
-- content_for :subtitle do
+- content_for :notes do
   = @race.distance 
   miles,
-  = @race.climb
-  climb
+  = @race.climb.to_s + "'"
 
 - content_for :introduction do
   - if next_instance = @race.next
