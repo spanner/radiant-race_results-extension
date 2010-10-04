@@ -22,6 +22,6 @@
 - render_region :bottom do |bottom|
   - bottom.buttons do
     #actions
-      = will_paginate @race_clubs
+      = pagination_for @race_clubs
       %ul
         %li= link_to image('plus') + " " + "new club", new_admin_race_club_url

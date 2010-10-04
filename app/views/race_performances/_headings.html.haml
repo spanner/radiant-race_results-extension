@@ -1,4 +1,5 @@
 %tr
   - %w{Pos Name Club Cat Time}.each do |h|
-    %th
+    %th{:class => h.downcase}
       =h
+  %th.prizes
