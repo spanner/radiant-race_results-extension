@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{radiant-race_results-extension}
-  s.version = "1.0.1"
+  s.version = "1.1.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["spanner"]
-  s.date = %q{2010-09-21}
+  s.date = %q{2010-10-04}
   s.description = %q{Makes easy the uploading, analysis and display of race results. Built for fell races but should work for most timed or score events including those with checkpoints.}
   s.email = %q{will@spanner.org}
   s.extra_rdoc_files = [
@@ -18,6 +18,7 @@ Gem::Specification.new do |s|
   s.files = [
     "README.md",
      "Rakefile",
+     "VERSION",
      "app/controllers/admin/race_clubs_controller.rb",
      "app/controllers/admin/race_competitors_controller.rb",
      "app/controllers/admin/race_instances_controller.rb",
@@ -44,6 +45,7 @@ Gem::Specification.new do |s|
      "app/views/admin/race_clubs/_form.html.haml",
      "app/views/admin/race_clubs/edit.html.haml",
      "app/views/admin/race_clubs/index.html.haml",
+     "app/views/admin/race_clubs/new.html.haml",
      "app/views/admin/race_competitors/_competitor.html.haml",
      "app/views/admin/race_competitors/_form.html.haml",
      "app/views/admin/race_competitors/edit.html.haml",
@@ -65,6 +67,7 @@ Gem::Specification.new do |s|
      "app/views/race_performances/_performance.html.haml",
      "app/views/races/index.html.haml",
      "app/views/races/show.html.haml",
+     "config/routes.rb",
      "cucumber.yml",
      "db/migrate/20091116130836_race_data.rb",
      "db/migrate/20091124095157_competitor_details.rb",
@@ -83,11 +86,13 @@ Gem::Specification.new do |s|
      "lib/race_results/admin_ui.rb",
      "lib/race_results/race_tags.rb",
      "lib/tasks/race_results_extension_tasks.rake",
+     "pkg/radiant-race_results-extension-1.0.1.gem",
      "public/images/admin/calendar_down.png",
      "public/images/admin/new-race.png",
      "public/javascripts/admin/races.js",
      "public/stylesheets/sass/admin/races.sass",
      "race_results_extension.rb",
+     "radiant-race_results-extension.gemspec",
      "spec/datasets/competitors_dataset.rb",
      "spec/datasets/race_sites_dataset.rb",
      "spec/datasets/races_dataset.rb",
