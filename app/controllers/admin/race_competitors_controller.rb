@@ -1,4 +1,5 @@
 class Admin::RaceCompetitorsController < Admin::ResourceController
+  paginate_models
   helper :races
   before_filter :get_competitor, :only => [:edit, :update, :delete]
   before_filter :make_competitor, :only => [:new, :create]

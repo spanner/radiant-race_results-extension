@@ -1,63 +1,8 @@
-- if @race.picture_asset
-  .illustration
-    = image_tag @race.picture_asset.thumbnail(:grid_4)
-    %p.caption
-      = @race.picture_asset.caption
-    
-= @race.description
-
-%div.checkpoints
-  %h2
-    Checkpoints
-
-  - if @race.checkpoints.any?
-    %ul.checkpoints
-      - @race.checkpoints.each do |cp|
-        %li
-          = cp.name
-          %span.info
-            = cp.location
-  - else 
-    %p No checkpoints defined.
-      
-- if @race.map_asset
-  %p
-    = link_to "Download map", @race.map_asset.thumbnail('original'), :class => 'racemap'
-
-%div.results
-  %h2
-    Records
-  - if @race.records.any?
-    %ul.race_records
-      - @race.records.each do |record|
-        %li
-          %strong
-            = record.race_category.name + ':'
-            = record.elapsed_time
-          by
-          = record.holder
-          in
-          = record.year
-          
-  - else
-    %p.noresults
-      None yet
-
-%div.results
-  %h2
-    Results
-  - if @race.instances.with_results.any?
-    %ul.race_instances
-      - @race.instances.with_results.each do |instance|
-        %li
-          = link_to instance.name, race_instance_url(@race, instance)
-  - else
-    %p.noresults
-      None yet
-
-
 - content_for :breadhead do
-  = link_to "Races", races_url, :class => 'breadhead'
+  - home = Page.find_by_parent_id(nil)
+  = link_to home.breadcrumb, home.url
+  \&gt;
+  = link_to "Races", races_url
 
 - content_for :title do
   = @race.name
@@ -68,14 +13,71 @@
   = @race.climb
   climb
 
-- content_for :introduction do
+- content_for :next do
   - if next_instance = @race.next
-    %div.future_race
-      %p
-        Next race:
-        %strong
-          = next_instance.nice_start_date + ','
-          at
-          = next_instance.nice_start_time + "."
+    Next race:
+    = next_instance.nice_start_date + ','
+    at
+    = next_instance.nice_start_time + "."
 
-      = next_instance.filter.filter(next_instance.notes)
+- content_for :notes do
+  - if next_instance = @race.next
+    = next_instance.filter.filter(next_instance.notes)
+
+- content_for :illustration do
+  - if @race.picture_asset
+    .illustration.thumbs
+      = image_tag @race.picture_asset.thumbnail(:square)
+      %span.frame
+      %p.caption
+        = @race.picture_asset.caption
+    
+- content_for :description do
+  = RedCloth.new(@race.description).to_html
+
+- content_for :checkpoints do
+  %h2.checkpoints
+    Checkpoints
+  - if @race.checkpoints.any?
+    %ul.checkpoints
+      - @race.checkpoints.each do |cp|
+        %li
+          %span.checkpoint
+            = cp.name
+          %span.info
+            = cp.location
+  - else 
+    %p No checkpoints defined.
+    
+- content_for :map do
+  - if @race.map_asset
+    %h2.map
+      = link_to "Download map", @race.map_asset.thumbnail('original'), :class => 'racemap'
+
+- content_for :records do
+  %h2.records
+    Records
+  - if @race.records.any?
+    %ul.race_records
+      - @race.records.each do |record|
+        %li
+          %span.record
+            = record.race_category.name + ':'
+            = record.elapsed_time
+          %span.info
+            by
+            = record.holder
+            in
+            = record.year
+        
+  - else
+    %p.norecords
+      None yet
+
+- content_for :results do
+  Results:
+  - if @race.instances.with_results.any?
+    - @race.instances.with_results.each do |instance|
+      = link_to instance.name, race_instance_url(@race, instance)
+  - else
+    None yet

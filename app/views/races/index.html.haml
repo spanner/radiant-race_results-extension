@@ -2,7 +2,7 @@
   .race
     - if race.picture_asset
       .race_illustration
-        = link_to image_tag(race.picture_asset.thumbnail(Radiant::Config['race_results.race_illustration_size'] || :grid_3)), race_url(race)
+        = link_to image_tag(race.picture_asset.thumbnail(Radiant::Config['races.race_illustration_size'] || :small)), race_url(race)
   
     .race_description
       %h2
@@ -25,7 +25,7 @@
           = link_to "Download map", race.map_asset.thumbnail('original'), :class => 'racemap'
 
       %p
-        = truncate_words(race.description, 36)
+        = truncate_words(race.description, 72)
 
 - content_for :title do
   Races
@@ -34,5 +34,4 @@
   - if next_instance = RaceInstance.future.first
     %p.next_race
       Next race:
-      %strong
-        = link_to "#{next_instance.race.name} on #{next_instance.nice_start_date}", race_instance_url(next_instance.race, next_instance)
+      = link_to "#{next_instance.race.name} on #{next_instance.nice_start_date}", race_instance_url(next_instance.race, next_instance)

@@ -1,5 +1,6 @@
 class RacesController < ApplicationController
-  radiant_layout { |controller| controller.layout_for :races }
+  include Radiant::Pagination::Controller
+  radiant_layout { |controller| controller.choose_layout }
   no_login_required
 
   def show
@@ -7,7 +8,15 @@ class RacesController < ApplicationController
   end
   
   def index
-    @races = Race.all.paginate(pagination_parameters)
+    @races = Race.paginate(pagination_parameters)
+  end
+  
+  def choose_layout
+    if action_name == "show"
+      layout = Radiant::Config['races.show_layout'] || Radiant::Config['races.layout']
+    else
+      layout = Radiant::Config['races.index_layout'] || Radiant::Config['races.layout']
+    end
   end
 
 end

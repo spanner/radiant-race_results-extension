@@ -1,4 +1,5 @@
 class Admin::RaceInstancesController < Admin::ResourceController
+  paginate_models
   
 protected
 

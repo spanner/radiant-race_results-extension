@@ -4,8 +4,6 @@
   - main.edit_header do
     %h1
       Edit Race
-    %p 
-      This is where you put in the basic information about the race, including general instructions for the competitor. The information you enter here should apply every time the race is run.
 
   - main.edit_form do  
     - form_for :race, @race, :url => admin_race_path(@race), :html => { :method => "put", :multipart => true } do |f|
