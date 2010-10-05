@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{radiant-race_results-extension}
-  s.version = "1.1.0"
+  s.version = "1.1.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["spanner"]
-  s.date = %q{2010-10-04}
+  s.date = %q{2010-10-05}
   s.description = %q{Makes easy the uploading, analysis and display of race results. Built for fell races but should work for most timed or score events including those with checkpoints.}
   s.email = %q{will@spanner.org}
   s.extra_rdoc_files = [
@@ -86,7 +86,6 @@ Gem::Specification.new do |s|
      "lib/race_results/admin_ui.rb",
      "lib/race_results/race_tags.rb",
      "lib/tasks/race_results_extension_tasks.rake",
-     "pkg/radiant-race_results-extension-1.0.1.gem",
      "public/images/admin/calendar_down.png",
      "public/images/admin/new-race.png",
      "public/javascripts/admin/races.js",

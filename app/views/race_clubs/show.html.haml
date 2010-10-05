@@ -11,7 +11,15 @@
     Not available yet.
 
 - content_for :breadhead do
-  = link_to "Race results", races_url, :class => 'breadhead'
+  - home = Page.find_by_parent_id(nil)
+  = link_to home.breadcrumb, home.url
+  \&gt;
+  = link_to "Races", races_url
+  \&gt;
+  = link_to @instance.race.name, race_url(@instance.race), :class => 'breadhead'
+  \&gt;
+  = link_to @instance.name, race_instance_url(@instance), :class => 'breadhead'
+  \&gt;
 
 - content_for :title do
   = @instance.full_name
