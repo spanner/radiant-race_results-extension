@@ -45,7 +45,7 @@ class RaceData < ActiveRecord::Migration
       t.column :site_id,            :integer
     end
     add_index :race_checkpoints, [:site_id]
-    add_index :race_checkpoints, [:race_instance_id]
+    add_index :race_checkpoints, [:race_id]
     
     # clubs, categories and competitors are global
 

@@ -66,12 +66,23 @@ class RacesDataset < Dataset::Base
       end
     end
     create_race "Scored" do
-      create_instance "2010", :started_at => DateTime.civil(2008, 10, 6, 9, 0, 0) do
-        create_checkpoint "Big", :value => 50
-        create_checkpoint "Small", :value => 10
-        create_checkpoint "Middling", :value => 25
-      end
+      create_checkpoint "Big", :value => 50
+      create_checkpoint "Small", :value => 10
+      create_checkpoint "Middling", :value => 25
+      create_instance "2010", :started_at => DateTime.civil(2008, 10, 6, 9, 0, 0)
     end
+    create_race "Duddon" do
+      create_checkpoint "Harter"
+      create_checkpoint "Hardknott"
+      create_checkpoint "Little Stand"
+      create_checkpoint "3 Shires"
+      create_checkpoint "Swirl How"
+      create_checkpoint "Dow Crag"
+      create_checkpoint "White Pike"
+      create_checkpoint "Caw"
+      create_instance "2010"
+    end
+    
   end
   
   helpers do

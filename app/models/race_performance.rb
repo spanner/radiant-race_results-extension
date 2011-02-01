@@ -139,7 +139,7 @@ class RacePerformance < ActiveRecord::Base
   end
   
   def time_at(checkpoint)
-    checkpoint_times.time_at(checkpoint).first
+    checkpoint_times.at_checkpoint(checkpoint).first
   end
   
   def status

@@ -140,7 +140,7 @@ protected
           headers.each do |key|
             value = runner[normalize(key)]
             if value && value.looks_like_duration? && cp = race.checkpoints.find_by_name(key)
-              cp.times.create(:race_performance_id => performance.id, :elapsed_time => value)
+              performance.checkpoint_times.create(:race_checkpoint_id => cp, :elapsed_time => value)
             end
           end
         end

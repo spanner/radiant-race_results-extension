@@ -9,7 +9,7 @@ class RaceCheckpointTime < ActiveRecord::Base
 
   # validates_presence_of :checkpoint, :performance
   
-  named_scope :time_at, lambda {|checkpoint|
+  named_scope :at_checkpoint, lambda {|checkpoint|
     {
       :conditions => ["race_checkpoint_id = ?", checkpoint.id]
     }
@@ -45,7 +45,7 @@ class RaceCheckpointTime < ActiveRecord::Base
   end
   
   def previous
-    performance.checkpoint_times.time_at(checkpoint.previous) if checkpoint.previous
+    performance.checkpoint_times.at_checkpoint(checkpoint.previous) if checkpoint.previous
   end
   
   def previous_position
