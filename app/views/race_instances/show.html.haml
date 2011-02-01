@@ -1,43 +1,37 @@
-- if @instance.has_results?
-  - if @club || @category
-    %p.subset
-      Showing only 
-      - if @club
-        %strong
-          = @club.name
-      - if @category
-        %strong
-          = @category.name
-      %br
-      = link_to "Show all results.", race_instance_url(@race, @instance)
-      
-  %table.results
-    %thead
-      = render :partial => 'race_performances/headings'
-    %tbody
-      = render :partial => 'race_performances/performance', :collection => @performances.completed
-      = render :partial => 'race_performances/performance', :collection => @performances.incomplete, :locals => {:trclass => 'unfinished'}
+= render :partial => 'races/standard_parts'
 
-- else
-  %p.noresults
-    Not available yet.
+- content_for :results do
+  - if @instance.has_results?
+    - if @club || @category
+      %p.subset
+        Showing only 
+        - if @club
+          %strong
+            = @club.name
+        - if @category
+          %strong
+            = @category.name
+        %br
+        = link_to "Show all results.", race_instance_url(@race, @instance)
+      
+    %table.results
+      %thead
+        = render :partial => 'race_performances/headings'
+      %tbody
+        = render :partial => 'race_performances/performance', :collection => @performances.completed
+        = render :partial => 'race_performances/performance', :collection => @performances.incomplete, :locals => {:trclass => 'unfinished'}
+
+  - else
+    %p.noresults
+      Not available yet.
 
 - content_for :breadhead do
-  - home = Page.find_by_parent_id(nil)
-  = link_to home.breadcrumb, home.url
-  \&gt;
   = link_to "Races", races_url, :class => 'breadhead'
-  \&gt;
+  = t('separator')
   = link_to @instance.race.name, race_url(@instance.race), :class => 'breadhead'
 
 - content_for :title do
   = @instance.full_name
-  
-- content_for :subtitle do
-  = @race.distance 
-  miles,
-  = @race.climb
-  climb
 
 - content_for :introduction do
   - if @instance.past?
@@ -46,12 +40,18 @@
     = @instance.filter.filter(@instance.notes)
 
 - content_for :see_also do
-  - if others = @race.instances.with_results.select{|i| i != @instance}
-    .see_also
-      %p
+  .see_also
+    %p
+      - if others = @race.instances.with_results.select{|i| i != @instance}
         More 
         = @race.name
         results:
-        = others.map { |instance| link_to instance.name, race_instance_url(@race, instance) }.join(', ')
-  
+        = others.map { |instance| link_to instance.name, race_instance_url(@race, instance) }.join(', ') + '.'
+        %br
+      More races:
+      = Race.except(@race).map {|race| link_to race.name, race_url(race) }.join(', ') + '.'
 
+
+
+= yield :results
+= yield :see_also

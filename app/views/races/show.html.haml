@@ -1,37 +1,30 @@
+= render :partial => 'races/standard_parts'
+
 - content_for :breadhead do
-  - home = Page.find_by_parent_id(nil)
-  = link_to home.breadcrumb, home.url
-  \&gt;
   = link_to "Races", races_url
-  \&gt;
+  = t('separator')
   
 - content_for :title do
   = @race.name
   
 - content_for :subtitle do
-  = @race.distance 
+  - if @race.cat
+    = @race.cat + ":"
+  = @race.distance.to_s
   miles,
-  = @race.climb
-  climb
+  = @race.climb.to_s + "'"
+  climb. 
 
 - content_for :next do
   - if next_instance = @race.next
     Next race:
-    = next_instance.nice_start_date + ','
+    = next_instance.nice_start_date
     at
     = next_instance.nice_start_time + "."
 
 - content_for :notes do
   - if next_instance = @race.next
     = next_instance.filter.filter(next_instance.notes)
-
-- content_for :illustration do
-  - if @race.picture_asset
-    .illustration.thumbs
-      = image_tag @race.picture_asset.thumbnail(:square)
-      %span.frame
-      %p.caption
-        = @race.picture_asset.caption
     
 - content_for :description do
   = RedCloth.new(@race.description).to_html
@@ -51,9 +44,18 @@
     %p No checkpoints defined.
     
 - content_for :map do
-  - if @race.map_asset
-    %h2.map
-      = link_to "Download map", @race.map_asset.thumbnail('original'), :class => 'racemap'
+  - if asset = @race.map_asset
+    = link_to image_tag(asset.thumbnail(:square), :class => 'bordered'), asset.thumbnail(:full), :class => "thumbnail", :rel => asset.thumbnail(:original)
+    - unless asset.caption.blank?
+      %p.caption
+        = asset.caption
+
+- content_for :illustration do
+  - if asset = @race.picture_asset
+    = link_to image_tag(asset.thumbnail(:square), :class => 'bordered'), asset.thumbnail(:full), :class => "thumbnail", :rel => asset.thumbnail(:original)
+    - unless asset.caption.blank?
+      %p.caption
+        = asset.caption
 
 - content_for :records do
   %h2.records
@@ -78,7 +80,29 @@
 - content_for :results do
   Results:
   - if @race.instances.with_results.any?
-    - @race.instances.with_results.each do |instance|
-      = link_to instance.name, race_instance_url(@race, instance)
+    = @race.instances.with_results.map { |instance| link_to instance.name, race_instance_url(@race, instance) }.join(', ') + '.'
   - else
-    None yet
+    None yet.
+
+- content_for :see_also do
+  .see_also
+    %p
+      More races:
+      = Race.except(@race).map {|race| link_to race.name, race_url(race) }.join(', ') + '.'
+    
+
+
+- content_for :introduction do
+  = yield :subtitle
+  = yield :results
+  %br
+  = yield :next
+
+- content_for :sidebar do
+  = yield :illustration
+  = yield :map
+
+= yield :description
+= yield :checkpoints
+= yield :records
+= yield :see_also

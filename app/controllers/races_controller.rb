@@ -1,22 +1,16 @@
-class RacesController < ApplicationController
+class RacesController < SiteController
   include Radiant::Pagination::Controller
-  radiant_layout { |controller| controller.choose_layout }
+  radiant_layout { |controller| Radiant::Config['races.layout'] }
   no_login_required
 
   def show
     @race = Race.find_by_slug(params[:slug])
+    expires_in 1.month, :private => false, :public => true
   end
   
   def index
     @races = Race.paginate(pagination_parameters)
-  end
-  
-  def choose_layout
-    if action_name == "show"
-      layout = Radiant::Config['races.show_layout'] || Radiant::Config['races.layout']
-    else
-      layout = Radiant::Config['races.index_layout'] || Radiant::Config['races.layout']
-    end
+    expires_in 1.month, :private => false, :public => true
   end
 
 end

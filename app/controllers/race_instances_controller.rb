@@ -1,5 +1,5 @@
-class RaceInstancesController < ApplicationController
-  radiant_layout { |controller| Radiant::Config['races.results_layout'] || Radiant::Config['races.layout'] }
+class RaceInstancesController < SiteController
+  radiant_layout { |controller| Radiant::Config['races.layout'] }
   no_login_required
   before_filter :get_race, :only => :show
 
@@ -12,6 +12,7 @@ class RaceInstancesController < ApplicationController
     if params[:cat] && @category = @instance.categories.find_by_name(params[:cat])
       @performances = @performances.eligible_for_category(@category)
     end
+    expires_in 1.month, :private => false, :public => true
   end
 
 private

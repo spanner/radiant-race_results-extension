@@ -35,4 +35,11 @@ module RacesHelper
     end
   end
 
+  def truncate_words(text='', length=64, omission="...")
+    return '' if text.blank?
+    words = text.split
+    omission = '' unless words.size > length
+    words[0..(length-1)].join(" ") + omission
+  end 
+
 end

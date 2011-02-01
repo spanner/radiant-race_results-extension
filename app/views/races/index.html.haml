@@ -1,36 +1,34 @@
-- @races.each do |race|
-  .race
-    - if race.picture_asset
-      .race_illustration
-        = link_to image_tag(race.picture_asset.thumbnail(Radiant::Config['races.race_illustration_size'] || :small)), race_url(race)
+= render :partial => 'races/standard_parts'
+
+- content_for :races do
+  - @races.each do |race|
+    .race
+      - if race.picture_asset
+        .race_illustration
+          = link_to image_tag(race.picture_asset.thumbnail(Radiant::Config['races.race_illustration_size'] || :small)), race_url(race)
   
-    .race_description
-      %h2
-        = link_to race.name, race_url(race)
-        %span.headernote
-          = race.distance 
-          miles,
-          = race.climb.to_s + "'"
+      .race_description
+        %h2
+          = link_to race.name, race_url(race)
+          %span.headernote
+            = race.distance 
+            miles,
+            = race.climb.to_s + "'"
 
-      %p.race_instances
-        - if next_instance = race.next
-          Next:
-          = link_to next_instance.nice_start_date, race_url(race)
-          %br
-        - if race.instances.with_results.any?
-          Results:
-          = race.instances.with_results.map { |instance| link_to instance.name, race_instance_url(race, instance) }.join(', ')
-          %br
-        - if race.map_asset
-          = link_to "Download map", race.map_asset.thumbnail('original'), :class => 'racemap'
+        %p.race_instances
+          - if next_instance = race.next
+            Next:
+            = link_to next_instance.nice_start_date, race_url(race)
+            %br
+          - if race.instances.with_results.any?
+            Results:
+            = race.instances.with_results.map { |instance| link_to instance.name, race_instance_url(race, instance) }.join(', ')
+            %br
+          - if race.map_asset
+            = link_to "Download map", race.map_asset.thumbnail('original'), :class => 'racemap'
 
-      %p
-        = truncate_words(race.description, 72)
-
-- content_for :breadhead do
-  - home = Page.find_by_parent_id(nil)
-  = link_to home.breadcrumb, home.url
-  \&gt;
+        %p
+          = truncate_words(race.description, 72)
 
 - content_for :title do
   Races
@@ -40,3 +38,7 @@
     %p.next_race
       Next race:
       = link_to "#{next_instance.race.name} on #{next_instance.nice_start_date}", race_instance_url(next_instance.race, next_instance)
+
+
+
+= yield :races

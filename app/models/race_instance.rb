@@ -24,7 +24,7 @@ class RaceInstance < ActiveRecord::Base
 
   validates_presence_of :name, :slug, :race
   validates_uniqueness_of :slug, :scope => :race_id
-  validates_length_of :slug, :maximum => 100, :message => '{{count}}-character limit'
+  validates_length_of :slug, :maximum => 100, :message => '%{count}-character limit'
   validates_format_of :slug, :with => %r{^([-_.A-Za-z0-9]*|)$}, :message => 'not URL-friendly'
   default_scope :order => 'started_at DESC'
   

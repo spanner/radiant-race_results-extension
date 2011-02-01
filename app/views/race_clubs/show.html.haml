@@ -1,3 +1,5 @@
+= render :partial => 'races/standard_parts'
+
 - if @instance.has_results?
   %table.results
     %thead
@@ -11,15 +13,12 @@
     Not available yet.
 
 - content_for :breadhead do
-  - home = Page.find_by_parent_id(nil)
-  = link_to home.breadcrumb, home.url
-  \&gt;
   = link_to "Races", races_url
-  \&gt;
+  = t('separator')
   = link_to @instance.race.name, race_url(@instance.race), :class => 'breadhead'
-  \&gt;
+  = t('separator')
   = link_to @instance.name, race_instance_url(@instance), :class => 'breadhead'
-  \&gt;
+  = t('separator')
 
 - content_for :title do
   = @instance.full_name

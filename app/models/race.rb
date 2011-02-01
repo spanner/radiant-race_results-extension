@@ -19,12 +19,15 @@ class Race < ActiveRecord::Base
 
   validates_presence_of :name, :slug
   validates_uniqueness_of :name, :slug
-  validates_length_of :slug, :maximum => 100, :message => '{{count}}-character limit'
+  validates_length_of :slug, :maximum => 100, :message => '%{count}-character limit'
   validates_format_of :slug, :with => %r{^([-_.A-Za-z0-9]*|)$}, :message => 'not URL-friendly'
 
   object_id_attr :filter, TextFilter
 
   default_scope :order => 'name ASC'
+  named_scope :except, lambda { |race|
+    { :conditions => ["NOT races.id = ?", race.id] }
+  }
 
   def to_param
     slug

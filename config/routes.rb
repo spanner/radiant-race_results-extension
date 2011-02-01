@@ -10,7 +10,6 @@ ActionController::Routing::Routes.draw do |map|
   # public interface is read-only and uses slugs for url-friendliness (and seo)
   map.races '/races', :controller => 'races', :action => 'index'
   map.race '/races/:slug', :controller => 'races', :action => 'show'
-  map.results '/results', :controller => 'race_instances', :action => 'index'
 
   map.race_instance '/races/:race_slug/:slug', :controller => 'race_instances', :action => 'show'
   map.race_club '/races/:race_slug/:slug/club/:club', :controller => 'race_instances', :action => 'show'

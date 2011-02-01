@@ -1,0 +1,4 @@
+- content_for :section_navigation do
+  = link_to "Races", races_url, :class => 'section'
+  - Race.all.each do |race|
+    = link_to race.name, race_url(race)
