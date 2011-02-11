@@ -37,7 +37,7 @@
   - if next_instance = RaceInstance.future.first
     %p.next_race
       Next race:
-      = link_to "#{next_instance.race.name} on #{next_instance.nice_start_date}", race_instance_url(next_instance.race, next_instance)
+      = link_to "#{next_instance.race.name} on #{next_instance.nice_start_date}", race_url(next_instance.race)
 
 
 

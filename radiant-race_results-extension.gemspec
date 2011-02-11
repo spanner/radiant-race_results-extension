@@ -5,11 +5,11 @@
 
 Gem::Specification.new do |s|
   s.name = %q{radiant-race_results-extension}
-  s.version = "1.1.1"
+  s.version = "1.2.1"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["spanner"]
-  s.date = %q{2010-10-05}
+  s.date = %q{2011-02-11}
   s.description = %q{Makes easy the uploading, analysis and display of race results. Built for fell races but should work for most timed or score events including those with checkpoints.}
   s.email = %q{will@spanner.org}
   s.extra_rdoc_files = [
@@ -65,6 +65,7 @@ Gem::Specification.new do |s|
      "app/views/race_instances/show.html.haml",
      "app/views/race_performances/_headings.html.haml",
      "app/views/race_performances/_performance.html.haml",
+     "app/views/races/_standard_parts.html.haml",
      "app/views/races/index.html.haml",
      "app/views/races/show.html.haml",
      "config/routes.rb",
@@ -80,6 +81,7 @@ Gem::Specification.new do |s|
      "db/migrate/20091228122837_record_holder.rb",
      "db/migrate/20100106104850_remember_calculations.rb",
      "db/migrate/20100426104801_race_attachments.rb",
+     "db/migrate/20101005112007_race_category.rb",
      "features/support/env.rb",
      "features/support/paths.rb",
      "lib/duration_extensions.rb",
