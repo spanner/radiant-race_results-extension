@@ -130,6 +130,7 @@ protected
           competitor.update_attribute(:gender, category.gender) unless competitor.gender
           status = RacePerformanceStatus.from_time(runner['elapsed_time'])
           performance = self.performances.create!({
+            :number => runner.delete('number'),
             :position => runner.delete('position'),
             :competitor => competitor,
             :category => category,
@@ -155,6 +156,7 @@ protected
   end
   
   @@field_aliases = {
+    'no' => 'number',
     'cat' => 'category',
     'time' => 'elapsed_time',
     'finish' => 'elapsed_time',
