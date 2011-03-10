@@ -1,0 +1,14 @@
+- performance = splits
+
+%tr
+  %td{:colspan => @instance.race.checkpoints.count + 1}
+    = performance.name
+    = link_to_unless_current performance.club.name, race_club_url(@instance.race, @instance, performance.club)
+    = link_to_unless_current performance.race_category.name, race_category_url(@instance.race, @instance, performance.race_category)
+%tr
+  - @instance.race.checkpoints.each do |cp|
+    %td.cpt
+      = performance.time_at(cp)
+  %td.time
+    - if performance.finished?
+      = performance.elapsed_time

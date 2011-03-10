@@ -129,7 +129,7 @@ protected
           competitor = RaceCompetitor.find_or_create_by_name_and_club(runner.delete('name'), club)
           category = RaceCategory.find_or_create_by_normalized_name(runner.delete('category'))
           competitor.update_attribute(:gender, category.gender) unless competitor.gender
-          status = RacePerformanceStatus.from_time(runner['elapsed_time'])
+          status = RacePerformanceStatus.from_pos_or_time(runner['position'], runner['elapsed_time'])
           performance = self.performances.create!({
             :number => runner.delete('number'),
             :position => runner.delete('position'),

@@ -1,4 +1,6 @@
 = render :partial => 'races/standard_parts'
+- header_partial = @mode == 'splits' ? 'race_performances/splits_headings' : 'race_performances/headings'
+- results_partial = @mode == 'splits' ? 'race_performances/splits' : 'race_performances/performance'
 
 - content_for :results do
   - if @instance.has_results?
@@ -16,10 +18,10 @@
       
     %table.results
       %thead
-        = render :partial => 'race_performances/headings'
+        = render :partial => header_partial
       %tbody
-        = render :partial => 'race_performances/performance', :collection => @performances.completed
-        = render :partial => 'race_performances/performance', :collection => @performances.incomplete, :locals => {:trclass => 'unfinished'}
+        = render :partial => results_partial, :collection => @performances.completed
+        = render :partial => results_partial, :collection => @performances.incomplete, :locals => {:trclass => 'unfinished'}
 
   - else
     %p.noresults

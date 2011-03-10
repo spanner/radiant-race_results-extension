@@ -47,6 +47,10 @@ module StringExtensions
     delimiters = Radiant::Config['race_results.delimiters'] || ':,.'
     true if self.match(/^[\d#{Regexp.escape(delimiters)}]+$/)
   end
+  
+  def looks_like_number?
+    Float(s) != nil rescue false
+  end
 end
 
 module NumericExtensions

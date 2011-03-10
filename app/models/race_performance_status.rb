@@ -36,8 +36,17 @@ class RacePerformanceStatus
     @@statuses.dup
   end
   
-  def self.from_time(time=nil)
-    time ||= ""
+  def self.from_pos_or_time(pos="",time="")
+    if self[pos]
+      self[pos]
+    elsif pos.looks_like_number?
+      self["Finished"]
+    else
+      self.from_time(time)
+    end
+  end
+
+  def self.from_time(time="")
     if time.seconds > 0   # String.seconds returns 0 for a string that doesn't parse. See DurationExtensions for method.
       self["Finished"] 
     elsif self[time]
@@ -49,10 +58,10 @@ class RacePerformanceStatus
   
   @@statuses = [
     RacePerformanceStatus.new(:id => 0,   :name => '?',   :aliases => ['unknown'] ),
-    RacePerformanceStatus.new(:id => 10,  :name => 'Ret', :aliases => ['retired', 'r']),
-    RacePerformanceStatus.new(:id => 20,  :name => 'DNF', :aliases => ['did not finish', 'x']),
-    RacePerformanceStatus.new(:id => 30,  :name => 'TO',  :aliases => ['timed out', 't']),
-    RacePerformanceStatus.new(:id => 50,  :name => 'Dsq', :aliases => ['disqualified', 'disq', 'd']),
+    RacePerformanceStatus.new(:id => 10,  :name => 'Ret', :aliases => ['retired', 'r', 'ret']),
+    RacePerformanceStatus.new(:id => 20,  :name => 'DNF', :aliases => ['did not finish', 'x', 'dnf']),
+    RacePerformanceStatus.new(:id => 30,  :name => 'TO',  :aliases => ['timed out', 't', 'to']),
+    RacePerformanceStatus.new(:id => 50,  :name => 'Dsq', :aliases => ['disqualified', 'disq', 'd', 'dsq']),
     RacePerformanceStatus.new(:id => 100, :name => 'Finished')
   ]
 end

@@ -11,7 +11,8 @@ ActionController::Routing::Routes.draw do |map|
   map.races '/races', :controller => 'races', :action => 'index'
   map.race '/races/:slug', :controller => 'races', :action => 'show'
 
-  map.race_instance '/races/:race_slug/:slug', :controller => 'race_instances', :action => 'show'
+  map.race_instance '/races/:race_slug/:slug/', :controller => 'race_instances', :action => 'show'
+  map.race_splits '/races/:race_slug/:slug/splits', :controller => 'race_instances', :action => 'show', :mode => 'splits'
   map.race_club '/races/:race_slug/:slug/club/:club', :controller => 'race_instances', :action => 'show'
   map.race_category '/races/:race_slug/:slug/cat/:cat', :controller => 'race_instances', :action => 'show'
 

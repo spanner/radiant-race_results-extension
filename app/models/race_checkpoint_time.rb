@@ -27,6 +27,15 @@ class RaceCheckpointTime < ActiveRecord::Base
       :conditions => ["elapsed_time < ?", duration]
     }
   }
+  
+  def to_s
+    time = read_attribute(:elapsed_time)
+    if time && time != 0
+      time.to_timecode
+    else
+      "&mdash;"
+    end
+  end
 
   def position
     checkpoint.times.in(race_instance).quicker_than(duration).count + 1
