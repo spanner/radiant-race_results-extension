@@ -6,7 +6,7 @@ class RacePerformance < ActiveRecord::Base
   belongs_to :race_instance
   belongs_to :race_competitor
   belongs_to :race_category
-  has_many :checkpoint_times, :class_name => 'RaceCheckpointTime'
+  has_many :checkpoint_times, :class_name => 'RaceCheckpointTime', :dependent => :destroy
 
   delegate :name, :reader, :club, :to => :competitor
   

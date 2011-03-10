@@ -7,7 +7,7 @@ class RaceCheckpointTime < ActiveRecord::Base
   belongs_to :checkpoint, :class_name => 'RaceCheckpoint'
   # delegate :race_instance, :category, :competitor, :club, :to => :performance
 
-  # validates_presence_of :checkpoint, :performance
+  # validates_presence_of :race_checkpoint_id, :performance_id
   
   named_scope :at_checkpoint, lambda {|checkpoint|
     {
