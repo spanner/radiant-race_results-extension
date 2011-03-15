@@ -22,14 +22,12 @@
   = link_to "Races", races_url, :class => 'breadhead'
   = t('separator')
   = link_to @instance.race.name, race_url(@instance.race), :class => 'breadhead'
+  - if @club || @category
+    = t('separator')
+    = link_to @instance.name, race_instance_url(@instance.race, @instance), :class => 'breadhead'
 
 - content_for :title do
-  - if @club
-    = "#{@instance.full_name}: #{@club.name}"
-  - elsif @category
-    = "#{@instance.full_name}: #{@category.name}"
-  - else
-    = @instance.full_name
+  = @instance.full_name
   
 - content_for :introduction do
   - if @instance.past?

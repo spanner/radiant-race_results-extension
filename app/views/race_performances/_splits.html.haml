@@ -9,9 +9,10 @@
   %td.runner
     = link_to performance.name, race_performance_url(@instance.race, @instance, performance)
   - previous = nil
+  - splits = @splits[performance.id] || []
   - @checkpoints.each do |cp|
     %td.cpt
-      - if t = @splits[performance.id][cp.id]
+      - if t = splits[cp.id]
         = t
         - if previous
           %br
@@ -22,9 +23,8 @@
         - previous = nil
         &mdash;
   %td.time
-    - if performance.finished?
-      = performance.elapsed_time
-      - if previous
-        %br
-          %span.note
-            = performance.elapsed_time - previous
+    = performance.elapsed_time
+    - if previous
+      %br
+        %span.note
+          = performance.elapsed_time - previous

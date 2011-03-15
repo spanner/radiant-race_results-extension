@@ -27,15 +27,10 @@
   = t('separator')
   = link_to @instance.race.name, race_url(@instance.race), :class => 'breadhead'
   = t('separator')
-  splits
+  = link_to @instance.name, race_instance_url(@instance.race, @instance), :class => 'breadhead'
 
 - content_for :title do
-  - if @club
-    = "#{@instance.full_name}: #{@club.name} splits"
-  - elsif @category
-    = "#{@instance.full_name}: #{@category.name} splits"
-  - else
-    = "#{@instance.full_name}: splits"
+  = "#{@instance.full_name}: splits"
 
 - content_for :introduction do
   - if @instance.past?

@@ -128,7 +128,9 @@ protected
   def process_results_file
     if csv_data = read_results_file
       headers = csv_data.shift.map(&:to_s)
-      checkpoints = headers.map{|h| race.checkpoints.find_by_name(h) }.compact
+      Rails.logger.warn "!!! headers: #{headers.inspect}"
+      checkpoints = headers.map{|h| race.checkpoints.find_by_name(h.strip) }.compact
+      Rails.logger.warn "!!! checkpoints: #{checkpoints.inspect}"
       race_data = csv_data.map {|row| row.map {|cell| cell.to_s } }.map {|row| Hash[*headers.zip(row).flatten] } # build AoA and then hash the second level
       RaceInstance.transaction do
         performances.destroy_all
@@ -154,7 +156,7 @@ protected
         
           checkpoints.each do |cp|
             value = runner[normalize(cp.name)]
-            cpt = performance.checkpoint_times.create!(:race_checkpoint_id => cp.id, :elapsed_time => value || 0)
+            cpt = performance.checkpoint_times.create!(:race_checkpoint_id => cp.id, :elapsed_time => value) unless value.blank?
           end
         end
       end

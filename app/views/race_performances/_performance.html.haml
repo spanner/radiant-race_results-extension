@@ -3,19 +3,24 @@
 %tr{:class => trclass}
   %td.pos
     - if performance.finished?
-      = link_to performance.position, race_performance_url(@instance.race, @instance, performance)
+      - if @instance.splits_available?
+        = link_to performance.position, race_performance_url(@instance.race, @instance, performance)
+      - else
+        = performance.position
     - else
       = performance.status
   %td.name
-    = link_to performance.name, race_performance_url(@instance.race, @instance, performance)
+    - if @instance.splits_available?
+      = link_to performance.name, race_performance_url(@instance.race, @instance, performance)
+    - else
+      = performance.name
   %td.club
     - if performance.club
       = link_to_unless_current performance.club.name, race_club_url(@instance.race, @instance, performance.club)
   %td.cat
     = link_to_unless_current performance.race_category.name, race_category_url(@instance.race, @instance, performance.race_category)
   %td.time
-    - if performance.finished?
-      = performance.elapsed_time
+    = performance.elapsed_time
   %td.prizes
     - if performance.finished?
       = performance.prizes
