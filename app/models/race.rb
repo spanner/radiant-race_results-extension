@@ -55,11 +55,11 @@ class Race < ActiveRecord::Base
   end
   
   def checkpoint_before(cp)
-    checkpoints.at(checkpoints.index(cp) - 1) if checkpoints.contain?(cp) and checkpoints.first != cp
+    checkpoints.at(checkpoints.index(cp) - 1) if checkpoints.include?(cp) and checkpoints.first != cp
   end
 
   def checkpoint_after(cp)
-    checkpoints.at(checkpoints.index(cp) + 1) if checkpoints.contain?(cp) and checkpoints.last != cp
+    checkpoints.at(checkpoints.index(cp) + 1) if checkpoints.include?(cp) and checkpoints.last != cp
   end
   
 

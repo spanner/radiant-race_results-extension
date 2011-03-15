@@ -1,17 +1,18 @@
 class RacePerformancesController < SiteController
   radiant_layout { |controller| Radiant::Config['races.layout'] }
   no_login_required
-  before_filter :get_race, :only => :show
+  before_filter :establish_context, :only => :show
 
   def show
     expires_in 1.month, :private => false, :public => true
-    @performance = @race.performances.find(params[:id])
   end
 
 private
 
-  def get_race
-    @race = Race.find(params[:race_id])
+  def establish_context
+    @race = Race.find_by_slug(params[:race_slug])
+    @instance = @race.instances.find_by_slug(params[:slug])
+    @performance = @instance.performances.find(params[:id])
   end
 
 end

@@ -2,7 +2,7 @@
 # require_dependency 'application_controller'
 
 class RaceResultsExtension < Radiant::Extension
-  version "1.2.1"
+  version "1.3.0"
   description "Makes easy the uploading, analysis and display of race results. Built for fell races but should work for most timed or score events."
   url "http://spanner.org/radiant/race_results"
   

@@ -1,0 +1,2 @@
+Pos, Name, <%= @instance.race.checkpoints.map(&:name).join(', ') %>, Finish
+<%= render :partial => "race_performances/splits", :collection => @performances.completed %>

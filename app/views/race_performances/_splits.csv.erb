@@ -1,0 +1,3 @@
+<%-
+  performance ||= splits
+%><%= performance.position %>, <%= performance.name %>, <%= @instance.race.checkpoints.collect {|cp| performance.time_at(cp) }.join(', ') %>, <%= performance.elapsed_time %>

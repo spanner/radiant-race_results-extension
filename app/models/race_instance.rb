@@ -74,7 +74,16 @@ class RaceInstance < ActiveRecord::Base
     # we will need to accommodate races whose checkpoints are different with each instance, but for now:
     race.checkpoints
   end
-    
+  
+  def assembled_checkpoint_times
+    checkpoint_times = {}
+    RaceCheckpointTime.in(self).with_context.each do |cpt|
+      checkpoint_times[cpt.performance.id] ||= {}
+      checkpoint_times[cpt.performance.id][cpt.checkpoint.id] = cpt.elapsed_time
+    end
+    checkpoint_times
+  end
+
   def performance_by(competitor)
     
   end

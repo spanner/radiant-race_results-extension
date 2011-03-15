@@ -139,9 +139,10 @@ class RacePerformance < ActiveRecord::Base
   end
   
   def time_at(checkpoint)
-    checkpoint_times.at_checkpoint(checkpoint).first
+    cpt = checkpoint_times.at_checkpoint(checkpoint)
+    cpt.first if cpt.any?
   end
-  
+
   def status
     RacePerformanceStatus.find(self.status_id)
   end

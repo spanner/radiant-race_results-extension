@@ -3,42 +3,62 @@ class RaceCheckpointTime < ActiveRecord::Base
   has_site if respond_to? :has_site
   belongs_to :created_by, :class_name => 'User'
   belongs_to :updated_by, :class_name => 'User'
-  belongs_to :performance, :class_name => 'RacePerformance'
-  belongs_to :checkpoint, :class_name => 'RaceCheckpoint'
-  # delegate :race_instance, :category, :competitor, :club, :to => :performance
+  belongs_to :race_performance
+  belongs_to :race_checkpoint
+  delegate :race_instance, :category, :competitor, :club, :to => :race_performance
+  delegate :name, :location, :description, :to => :race_checkpoint
+  validates_presence_of :race_checkpoint, :race_performance
 
-  # validates_presence_of :race_checkpoint_id, :performance_id
+  alias :performance :race_performance
+  alias :checkpoint :race_checkpoint
   
+  default_scope :include => [:race_performance, :race_checkpoint]
+  before_save :calculate_interval   # position would be nice too but we may not have imported all the data at this stage
+  
+  named_scope :in, lambda {|instance|
+    {
+      :joins => "INNER JOIN race_performances as performances ON race_checkpoint_times.race_performance_id = performances.id",  
+      :conditions => ["performances.race_instance_id = ?", instance.id]
+    }
+  }
+  
+  named_scope :with_context, :include => [:race_performance, :race_checkpoint]
+
   named_scope :at_checkpoint, lambda {|checkpoint|
     {
       :conditions => ["race_checkpoint_id = ?", checkpoint.id]
     }
   }
 
-  named_scope :time_in, lambda {|instance|
+  named_scope :ahead_of, lambda {|duration|
     {
-      :joins => "INNER JOIN race_performances as performances ON race_checkpoint_times.race_performance_id = performances.id",  
-      :conditions => ["performances.race_instance_id = ?", instance.id]
+      :conditions => ["race_checkpoint_times.elapsed_time IS NOT NULL AND race_checkpoint_times.elapsed_time > 0 AND race_checkpoint_times.elapsed_time < ?", duration]
     }
   }
-
+  
   named_scope :quicker_than, lambda {|duration|
     {
-      :conditions => ["elapsed_time < ?", duration]
+      :conditions => ["race_checkpoint_times.interval IS NOT NULL AND race_checkpoint_times.interval > 0 AND race_checkpoint_times.interval < ?", duration]
     }
   }
   
   def to_s
     time = read_attribute(:elapsed_time)
-    if time && time != 0
-      time.to_timecode
-    else
-      "&mdash;"
-    end
+    time.to_timecode if time && time != 0
   end
 
   def position
-    checkpoint.times.in(race_instance).quicker_than(duration).count + 1
+    faster = self.class.in(race_instance).at_checkpoint(checkpoint).ahead_of(elapsed_time.seconds)
+    faster.length + 1
+  end
+
+  def leg_position
+    if !previous
+      position
+    elsif interval && interval.seconds > 0
+      faster = self.class.in(race_instance).at_checkpoint(checkpoint).quicker_than(interval.seconds)
+      faster.length + 1
+    end
   end
   
   def elapsed_time
@@ -53,8 +73,16 @@ class RaceCheckpointTime < ActiveRecord::Base
     write_attribute(:elapsed_time, time.seconds)    # numbers will pass through unchanged. strings will be timecode-parsed
   end
   
+  def interval
+    if s = read_attribute(:interval)
+      s.to_timecode
+    else
+      ""
+    end
+  end
+  
   def previous
-    performance.checkpoint_times.at_checkpoint(checkpoint.previous) if checkpoint.previous
+    performance.time_at(checkpoint.previous) if checkpoint.previous
   end
   
   def previous_position
@@ -66,7 +94,15 @@ class RaceCheckpointTime < ActiveRecord::Base
   end
   
   def gain
-    sprintf('+%d', position - previous_position)
+    position - previous_position
+  end
+
+private
+
+  def calculate_interval
+    if previous
+      write_attribute(:interval, (elapsed_time - previous.elapsed_time).seconds)
+    end
   end
 
 end

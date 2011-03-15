@@ -39,7 +39,7 @@ end
 
 module StringExtensions
   def duration
-    ActiveSupport::Duration.parse(self)
+    ActiveSupport::Duration.parse(self).value
   end
   alias :seconds :duration
   
@@ -48,12 +48,25 @@ module StringExtensions
     true if self.match(/^[\d#{Regexp.escape(delimiters)}]+$/)
   end
   
+  def -(other)
+    if self.looks_like_duration? && other.looks_like_duration?
+      (self.seconds - other.seconds).to_timecode
+    end
+  end
+  
   def looks_like_number?
     Float(s) != nil rescue false
+  end
+
+  def ordinal
+    to_i.ordinal
   end
 end
 
 module NumericExtensions
+  def ordinal
+    to_s + ([[nil, 'st','nd','rd'],[]][self / 10 == 1 && 1 || 0][self % 10] || 'th')
+  end
   def to_timecode
     seconds.timecode
   end

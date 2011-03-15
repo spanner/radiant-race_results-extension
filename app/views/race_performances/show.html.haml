@@ -1,0 +1,105 @@
+= render :partial => 'races/standard_parts'
+
+- content_for :performance do
+  %table.ranking
+    %thead
+      %tr
+        - %w{Pos Name Club Cat Time}.each do |h|
+          %th{:class => h.downcase}
+            =h
+        %th.prizes
+    %tbody
+      = render :partial => 'race_performances/performance', :object => @performance
+
+  %h2 Splits
+
+  %table.splits
+    %thead
+      %tr
+        %th Checkpoint
+        %th Time
+        %th Interval
+        %th Position
+        %th This leg
+        %th Places gained
+    %tbody
+      - previous = nil
+      - previous_position = nil
+      - @race.checkpoints.each do |cp|
+        - cpt = @performance.time_at(cp)
+        - t = cpt.elapsed_time
+        %tr
+          %td 
+            = cpt.name
+          - if t && t.seconds > 0
+            %td 
+              = t
+            %td 
+              - if previous
+                = t - previous
+            %td 
+              = cpt.position
+            %td 
+              = cpt.leg_position
+            %td 
+              - if previous_position
+                - delta = previous_position - cpt.position
+                - if delta > 0
+                  = "+#{delta}"
+                - else
+                  = delta
+            - previous = t
+            - previous_position = cpt.position
+          - else
+            %td 
+              &mdash;
+            - previous = nil
+      %tr
+        %td
+          Finish
+        %td
+          = @performance.elapsed_time
+        %td
+          - if previous
+            = @performance.elapsed_time - previous
+        %td
+          = @performance.position
+        %td
+        %td
+          - if previous_position
+            - delta = previous_position - @performance.position 
+            - if delta > 0
+              = "+#{delta}"
+            - elsif delta == 0
+              &mdash;
+            - else
+              = delta
+          
+        
+- content_for :breadhead do
+  = link_to "Races", races_url, :class => 'breadhead'
+  = t('separator')
+  = link_to @instance.race.name, race_url(@instance.race), :class => 'breadhead'
+  = t('separator')
+  = @performance.name
+
+- content_for :title do
+  = "#{@instance.full_name}: #{@performance.name}"
+
+- content_for :see_also do
+  .see_also
+    %p
+      - if @performance.club
+        = link_to "More #{@performance.club.name} results", race_club_url(@race, @instance, @performance.club)
+        %br
+      - if @performance.category
+        = link_to "More #{@performance.category.name} results", race_category_url(@race, @instance, @performance.category)
+        %br
+      All
+      = @instance.full_name
+      = link_to "results", race_instance_url(@race, @instance)
+      or 
+      = link_to "splits", race_splits_url(@race, @instance)
+
+= yield :performance
+= yield :see_also

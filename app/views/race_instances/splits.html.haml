@@ -2,18 +2,22 @@
 
 - content_for :results do
   - if @instance.has_results?
-    = render :partial => 'summary'
-      
-    %table.ranking
+    = render :partial => 'summary', :locals => {:splitting => true}
+    %table.splits
       %thead
         %tr
-          - %w{Pos Name Club Cat Time}.each do |h|
-            %th{:class => h.downcase}
-              =h
-          %th.prizes
+          %th.pos
+            pos
+          %th.runner
+            name
+          - @instance.race.checkpoints.each do |cp|
+            %th.cpt
+              =cp.name
+          %th.time
+            Finish
       %tbody
-        = render :partial => 'race_performances/performance', :collection => @performances.completed
-        = render :partial => 'race_performances/performance', :collection => @performances.incomplete, :locals => {:trclass => 'unfinished'}
+        = render :partial => 'race_performances/splits', :collection => @performances.completed
+
   - else
     %p.noresults
       Not available yet.
@@ -22,15 +26,17 @@
   = link_to "Races", races_url, :class => 'breadhead'
   = t('separator')
   = link_to @instance.race.name, race_url(@instance.race), :class => 'breadhead'
+  = t('separator')
+  splits
 
 - content_for :title do
   - if @club
-    = "#{@instance.full_name}: #{@club.name}"
+    = "#{@instance.full_name}: #{@club.name} splits"
   - elsif @category
-    = "#{@instance.full_name}: #{@category.name}"
+    = "#{@instance.full_name}: #{@category.name} splits"
   - else
-    = @instance.full_name
-  
+    = "#{@instance.full_name}: splits"
+
 - content_for :introduction do
   - if @instance.past?
     = @instance.filter.filter(@instance.report)

@@ -3,11 +3,11 @@
 %tr{:class => trclass}
   %td.pos
     - if performance.finished?
-      = performance.position
+      = link_to performance.position, race_performance_url(@instance.race, @instance, performance)
     - else
       = performance.status
   %td.name
-    = performance.name
+    = link_to performance.name, race_performance_url(@instance.race, @instance, performance)
   %td.club
     - if performance.club
       = link_to_unless_current performance.club.name, race_club_url(@instance.race, @instance, performance.club)
