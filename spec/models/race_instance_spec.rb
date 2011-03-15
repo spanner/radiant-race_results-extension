@@ -78,10 +78,10 @@ describe RaceInstance do
     it "should import checkpoint times" do
       @perf.checkpoint_times.any?.should be_true
       Rails.logger.warn ">>>"
-      p "checkpoint is #{@cp.inspect}"
-      p "checkpoint times are #{@perf.checkpoint_times.inspect}"
-      p "perf.time_at(@cp) is #{@perf.time_at(@cp).inspect}"
-      Rails.logger.warn "<<<"
+      # p "checkpoint is #{@cp.inspect}"
+      # p "checkpoint times are #{@perf.checkpoint_times.inspect}"
+      # p "perf.time_at(@cp) is #{@perf.time_at(@cp).inspect}"
+      # Rails.logger.warn "<<<"
       @perf.time_at(@cp).elapsed_time.should == "0:36:30"
     end
     
