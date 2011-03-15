@@ -23,9 +23,10 @@
   - else
     Click on a club or category to see only those results.
 
-  %br
-    View as
-    - if splitting
-      = link_to_unless_current "simple results", results_url
-    - else
-      = link_to_unless_current "splits", splits_url
+  - if @instance.splits_available?
+    %br
+      View as
+      - if splitting
+        = link_to_unless_current "simple results", results_url
+      - else
+        = link_to_unless_current "splits", splits_url

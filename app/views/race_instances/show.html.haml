@@ -40,6 +40,9 @@
 - content_for :see_also do
   .see_also
     %p
+      - if @instance.splits_available?
+        = link_to "#{@instance.full_name} Split times", race_splits_url(@race, @instance)
+        %br
       - if others = @race.instances.with_results.select{|i| i != @instance}
         More 
         = @race.name

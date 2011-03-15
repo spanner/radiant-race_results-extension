@@ -75,6 +75,10 @@ class RaceInstance < ActiveRecord::Base
     race.checkpoints
   end
   
+  def splits_available?
+    RaceCheckpointTime.in(self).any?
+  end
+  
   def assembled_checkpoint_times
     checkpoint_times = {}
     RaceCheckpointTime.in(self).with_context.each do |cpt|

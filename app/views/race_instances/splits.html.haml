@@ -46,6 +46,8 @@
 - content_for :see_also do
   .see_also
     %p
+      = link_to "#{@instance.full_name} results", race_instance_url(@race, @instance)
+      %br
       - if others = @race.instances.with_results.select{|i| i != @instance}
         More 
         = @race.name

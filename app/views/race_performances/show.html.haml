@@ -95,11 +95,10 @@
       - if @performance.category
         = link_to "More #{@performance.category.name} results", race_category_url(@race, @instance, @performance.category)
         %br
-      All
-      = @instance.full_name
-      = link_to "results", race_instance_url(@race, @instance)
-      or 
-      = link_to "splits", race_splits_url(@race, @instance)
+      = link_to "All #{@instance.full_name} results", race_instance_url(@race, @instance)
+      - if @instance.splits_available?
+        or 
+        = link_to "splits", race_splits_url(@race, @instance)
 
 = yield :performance
 = yield :see_also
