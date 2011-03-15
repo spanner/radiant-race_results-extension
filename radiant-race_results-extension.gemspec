@@ -5,18 +5,19 @@
 
 Gem::Specification.new do |s|
   s.name = %q{radiant-race_results-extension}
-  s.version = "1.2.1"
+  s.version = "1.3.0"
 
   s.required_rubygems_version = Gem::Requirement.new(">= 0") if s.respond_to? :required_rubygems_version=
   s.authors = ["spanner"]
-  s.date = %q{2011-02-11}
+  s.date = %q{2011-03-15}
   s.description = %q{Makes easy the uploading, analysis and display of race results. Built for fell races but should work for most timed or score events including those with checkpoints.}
   s.email = %q{will@spanner.org}
   s.extra_rdoc_files = [
     "README.md"
   ]
   s.files = [
-    "README.md",
+    ".gitignore",
+     "README.md",
      "Rakefile",
      "VERSION",
      "app/controllers/admin/race_clubs_controller.rb",
@@ -61,13 +62,21 @@ Gem::Specification.new do |s|
      "app/views/admin/races/new.html.haml",
      "app/views/race_categories/show.html.haml",
      "app/views/race_clubs/show.html.haml",
+     "app/views/race_instances/_summary.html.haml",
      "app/views/race_instances/index.html.haml",
+     "app/views/race_instances/show.csv.erb",
      "app/views/race_instances/show.html.haml",
-     "app/views/race_performances/_headings.html.haml",
+     "app/views/race_instances/splits.csv.erb",
+     "app/views/race_instances/splits.html.haml",
+     "app/views/race_performances/_performance.csv.erb",
      "app/views/race_performances/_performance.html.haml",
+     "app/views/race_performances/_splits.csv.erb",
+     "app/views/race_performances/_splits.html.haml",
+     "app/views/race_performances/show.html.haml",
      "app/views/races/_standard_parts.html.haml",
      "app/views/races/index.html.haml",
      "app/views/races/show.html.haml",
+     "artwork/csv.psd",
      "config/routes.rb",
      "cucumber.yml",
      "db/migrate/20091116130836_race_data.rb",
@@ -82,6 +91,7 @@ Gem::Specification.new do |s|
      "db/migrate/20100106104850_remember_calculations.rb",
      "db/migrate/20100426104801_race_attachments.rb",
      "db/migrate/20101005112007_race_category.rb",
+     "db/migrate/20110315114349_store_intervals.rb",
      "features/support/env.rb",
      "features/support/paths.rb",
      "lib/duration_extensions.rb",
@@ -90,8 +100,11 @@ Gem::Specification.new do |s|
      "lib/tasks/race_results_extension_tasks.rake",
      "public/images/admin/calendar_down.png",
      "public/images/admin/new-race.png",
+     "public/images/race_results/csv.png",
      "public/javascripts/admin/races.js",
+     "public/javascripts/tablesorter.js",
      "public/stylesheets/sass/admin/races.sass",
+     "public/stylesheets/sass/race_results.sass",
      "race_results_extension.rb",
      "radiant-race_results-extension.gemspec",
      "spec/datasets/competitors_dataset.rb",

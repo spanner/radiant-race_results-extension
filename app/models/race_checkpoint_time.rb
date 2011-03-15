@@ -44,7 +44,11 @@ class RaceCheckpointTime < ActiveRecord::Base
   
   def to_s
     time = read_attribute(:elapsed_time)
-    time.to_timecode if time && time != 0
+    if time && time != 0
+      time.to_timecode
+    else
+      ""
+    end
   end
 
   def position

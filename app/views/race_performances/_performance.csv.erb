@@ -1,1 +1,1 @@
-<%= performance.position %>, <%= performance.name %>, <%= performance.race_category.name %>, <%= performance.club.name %>, <%= performance.elapsed_time %>
+<%= performance.position %>, <%= performance.name %>, <%= performance.race_category.name if performance.race_category %>, <%= performance.club.name if performance.club %>, <%= performance.elapsed_time %>
