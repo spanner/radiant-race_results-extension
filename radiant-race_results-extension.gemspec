@@ -1,6 +1,6 @@
 # -*- encoding: utf-8 -*-
 $:.push File.expand_path("../lib", __FILE__)
-require "radiant-race_results-extension/version"
+require "radiant-race_results-extension"
 
 Gem::Specification.new do |s|
   s.name        = "radiant-race_results-extension"
