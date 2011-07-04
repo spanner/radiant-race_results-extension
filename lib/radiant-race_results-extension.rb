@@ -1,5 +1,5 @@
 module RadiantRaceResultsExtension
-  VERSION = '1.3.4'
+  VERSION = '1.4.0'
   SUMMARY = %q{Race results analysis and presentation for the Radiant CMS}
   DESCRIPTION = "Makes easy the uploading, analysis and display of race results. Built for fell races but should work for most timed or score events."
   URL = "http://spanner.org/radiant/race_results"
