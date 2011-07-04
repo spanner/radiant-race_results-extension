@@ -1,6 +1,8 @@
 # Uncomment this if you reference any of your controllers in activate
 # require_dependency 'application_controller'
 
+require "radiant-race_results-extension"
+
 class RaceResultsExtension < Radiant::Extension
   version RadiantRaceResultsExtension::VERSION
   description RadiantRaceResultsExtension::DESCRIPTION
@@ -16,10 +18,10 @@ class RaceResultsExtension < Radiant::Extension
   
   def activate
     require 'duration_extensions'                   # string to duration and vice versa
-    RacePage.send :include, RaceResults::RaceTags
+    RacePage.send :include, RaceTags
     
     unless defined? admin.race
-      Radiant::AdminUI.send :include, RaceResults::AdminUI
+      Radiant::AdminUI.send :include, RaceAdminUI
       admin.race = Radiant::AdminUI.load_default_race_regions
       admin.race_instance = Radiant::AdminUI.load_default_race_instance_regions
       admin.race_club = Radiant::AdminUI.load_default_race_club_regions
