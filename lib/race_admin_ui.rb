@@ -15,7 +15,7 @@ module RaceAdminUI
       protected
 
         def load_default_race_regions
-          returning OpenStruct.new do |race|
+          OpenStruct.new.tap do |race|
             race.edit = Radiant::AdminUI::RegionSet.new do |edit|
               edit.main.concat %w{edit_header edit_form}
               edit.form.concat %w{edit_name edit_metadata edit_distance edit_description edit_attachments edit_records edit_checkpoints}
@@ -30,7 +30,7 @@ module RaceAdminUI
         end
     
         def load_default_race_instance_regions
-          returning OpenStruct.new do |race_instance|
+          OpenStruct.new.tap do |race_instance|
             race_instance.edit = Radiant::AdminUI::RegionSet.new do |edit|
               edit.main.concat %w{edit_header edit_form}
               edit.form.concat %w{edit_name edit_metadata edit_start edit_notes edit_file edit_report}
@@ -40,7 +40,7 @@ module RaceAdminUI
         end
 
         def load_default_race_club_regions
-          returning OpenStruct.new do |race_club|
+          OpenStruct.new.tap do |race_club|
             race_club.edit = Radiant::AdminUI::RegionSet.new do |edit|
               edit.main.concat %w{edit_header edit_form}
               edit.form.concat %w{edit_name edit_aliases}
@@ -55,7 +55,7 @@ module RaceAdminUI
         end
 
         def load_default_race_competitor_regions
-          returning OpenStruct.new do |race_competitor|
+          OpenStruct.new.tap do |race_competitor|
             race_competitor.edit = Radiant::AdminUI::RegionSet.new do |edit|
               edit.main.concat %w{edit_header edit_form}
               edit.form.concat %w{edit_name edit_club edit_person}
