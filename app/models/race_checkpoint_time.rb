@@ -55,6 +55,10 @@ class RaceCheckpointTime < ActiveRecord::Base
     faster = self.class.in(race_instance).at_checkpoint(checkpoint).ahead_of(elapsed_time.seconds)
     faster.length + 1
   end
+  
+  def inverted_position
+    race_instance.total_runners - position
+  end
 
   def leg_position
     if !previous
@@ -65,6 +69,10 @@ class RaceCheckpointTime < ActiveRecord::Base
     end
   end
   
+  def inverted_leg_position
+    race_instance.total_runners - leg_position
+  end
+
   def elapsed_time
     if s = read_attribute(:elapsed_time)
       s.to_timecode

@@ -1,7 +1,8 @@
 require 'csv'
 
 class RaceInstance < ActiveRecord::Base
-
+  attr_accessor :checkpoint_times, :performances_count
+  
   has_site if respond_to? :has_site
   belongs_to :created_by, :class_name => 'User'
   belongs_to :updated_by, :class_name => 'User'
@@ -80,12 +81,14 @@ class RaceInstance < ActiveRecord::Base
   end
   
   def assembled_checkpoint_times
-    checkpoint_times = {}
-    RaceCheckpointTime.in(self).with_context.each do |cpt|
-      checkpoint_times[cpt.performance.id] ||= {}
-      checkpoint_times[cpt.performance.id][cpt.checkpoint.id] = cpt.elapsed_time
+    unless @checkpoint_times
+      @checkpoint_times = {}
+      RaceCheckpointTime.in(self).with_context.each do |cpt|
+        @checkpoint_times[cpt.performance.id] ||= {}
+        @checkpoint_times[cpt.performance.id][cpt.checkpoint.id] = cpt.elapsed_time
+      end
     end
-    checkpoint_times
+    @checkpoint_times
   end
 
   def performance_by(competitor)
@@ -121,6 +124,10 @@ class RaceInstance < ActiveRecord::Base
   
   def category_present?(category)
     categories.include?(category)
+  end
+  
+  def total_runners
+    @performances_count ||= performances.count
   end
   
 protected

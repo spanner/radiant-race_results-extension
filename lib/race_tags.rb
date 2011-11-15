@@ -627,7 +627,7 @@ module RaceTags
 
     *Usage:*
 
-    <pre><code><r:breadcrumbs [separator="separator_string"] [nolinks="true"] /></code></pre>
+    <pre><code><r:breadcrumbs [race_results_extension.separator="race_results_extension.separator_string"] [nolinks="true"] /></code></pre>
   }
   tag 'breadcrumbs' do |tag|
     page = tag.locals.page
@@ -652,8 +652,8 @@ module RaceTags
         crumbs.unshift %{<a href="#{tag.render('url')}">#{tag.render('breadcrumb')}</a>}
       end
     end
-    separator = tag.attr['separator'] || ' &gt; '
-    crumbs.join(separator)
+    race_results_extension.separator = tag.attr['race_results_extension.separator'] || ' &gt; '
+    crumbs.join(race_results_extension.separator)
   end
 
 

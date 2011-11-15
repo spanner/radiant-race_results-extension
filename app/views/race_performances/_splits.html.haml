@@ -1,4 +1,9 @@
 - performance ||= splits
+- checkpoints = @checkpoints || @instance.checkpoints
+- splits = if @splits
+  - @splits[performance.id] || []
+- else
+  - performance.splits
 
 %tr
   %td.pos
@@ -9,8 +14,8 @@
   %td.runner
     = link_to performance.name, race_performance_url(@instance.race, @instance, performance)
   - previous = nil
-  - splits = @splits[performance.id] || []
-  - @checkpoints.each do |cp|
+  
+  - checkpoints.each do |cp|
     %td.cpt
       - if t = splits[cp.id]
         = t

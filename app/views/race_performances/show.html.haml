@@ -4,14 +4,16 @@
   %table.ranking
     %thead
       %tr
+        %th
         - %w{Pos Name Club Cat Time}.each do |h|
           %th{:class => h.downcase}
             =h
         %th.prizes
     %tbody
-      = render :partial => 'race_performances/performance', :object => @performance
+      = render :partial => 'race_performances/splits', :object => @performance
 
-  %h2 Splits
+  .performance_chart
+    = link_to "loading", race_performance_url(@instance.race, @instance, @performance, :format => :js, :also => @performance.neighbours.map(&:id).join(',')), :class => 'waiting'
 
   %table.splits
     %thead
@@ -78,13 +80,13 @@
         
 - content_for :breadhead do
   = link_to "Races", races_url, :class => 'breadhead'
-  = t('separator')
+  = t('race_results_extension.separator')
   = link_to @instance.race.name, race_url(@instance.race), :class => 'breadhead'
-  = t('separator')
-  = @performance.name
+  = t('race_results_extension.separator')
+  = link_to @instance.name, race_instance_url(@instance.race, @instance), :class => 'breadhead'
 
 - content_for :title do
-  = "#{@instance.full_name}: #{@performance.name}"
+  = @performance.name
 
 - content_for :see_also do
   .see_also

@@ -75,6 +75,13 @@ class RacePerformance < ActiveRecord::Base
       :conditions => ["elapsed_time IS NOT NULL AND elapsed_time > 0 AND elapsed_time < ?", seconds]
     }
   }
+  
+  named_scope :finishing_between, lambda { |bottom, top|
+    bottom, top = [top, bottom] if bottom > top
+    {
+      :conditions => ["position > ? AND position < ?", bottom, top]
+    }
+  }
 
   named_scope :completed, {
     :conditions => 'status_id >= 100'
@@ -122,6 +129,18 @@ class RacePerformance < ActiveRecord::Base
     race_instance.performances.eligible_for_category(cat).quicker_than(time_in_seconds).count + 1
   end
   
+  def sparkline_positions
+    checkpoint_times.map(&:inverted_leg_position)
+  end
+  
+  def neighbourhood(spread=3)
+    race_instance.performances.finishing_between(self.position.to_i - spread, self.position.to_i + spread)
+  end
+  
+  def neighbours
+    neighbourhood - [self]
+  end
+  
   def time_in_seconds
     read_attribute(:elapsed_time)
   end
@@ -143,6 +162,12 @@ class RacePerformance < ActiveRecord::Base
     cpt.first if cpt.any?
   end
 
+  def splits
+    self.checkpoint_times.each_with_object({}) do |cpt, hsh| 
+      hsh[cpt.race_checkpoint_id] = cpt.elapsed_time
+    end
+  end
+
   def status
     RacePerformanceStatus.find(self.status_id)
   end
@@ -152,8 +177,6 @@ class RacePerformance < ActiveRecord::Base
   def finished?
      status == RacePerformanceStatus["Finished"]
   end
-  
-  
     
   def prized?
     true if prizes.any?

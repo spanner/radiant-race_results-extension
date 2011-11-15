@@ -1,6 +1,14 @@
-- trclass ||= performance.prized? ? 'prized' : 'finisher'
+- trclasses = []
+- trclasses << 'finisher' if performance.finished?
+- trclasses << 'unfinished' unless performance.finished?
+- trclasses << 'prized' if performance.prized?
 
-%tr{:class => trclass}
+%tr{:class => trclasses.join(' ')}
+  - if @instance.splits_available?
+    %td.sparkline
+      - if performance.finished?
+        %a{:href => race_performance_url(@instance.race, @instance, performance)}
+          %span.sparkline{:values => performance.sparkline_positions.join(',')}
   %td.pos
     - if performance.finished?
       - if @instance.splits_available?
@@ -17,6 +25,8 @@
   %td.club
     - if performance.club
       = link_to_unless_current performance.club.name, race_club_url(@instance.race, @instance, performance.club)
+    - else
+      = t('race_results_extension.unattached')
   %td.cat
     = link_to_unless_current performance.race_category.name, race_category_url(@instance.race, @instance, performance.race_category)
   %td.time

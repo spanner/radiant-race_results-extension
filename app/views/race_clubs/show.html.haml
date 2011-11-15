@@ -14,11 +14,11 @@
 
 - content_for :breadhead do
   = link_to "Races", races_url
-  = t('separator')
+  = t('race_results_extension.separator')
   = link_to @instance.race.name, race_url(@instance.race), :class => 'breadhead'
-  = t('separator')
+  = t('race_results_extension.separator')
   = link_to @instance.name, race_instance_url(@instance), :class => 'breadhead'
-  = t('separator')
+  = t('race_results_extension.separator')
 
 - content_for :title do
   = @instance.full_name

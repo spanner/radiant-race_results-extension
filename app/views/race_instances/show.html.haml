@@ -7,9 +7,13 @@
     %table.ranking
       %thead
         %tr
-          - %w{Pos Name Club Cat Time}.each do |h|
-            %th{:class => h.downcase}
-              =h
+          - if @instance.splits_available?
+            %th
+          %th.pos= link_to t('activerecord.attributes.race_performance.position'), '#'
+          %th.name= link_to t('activerecord.attributes.race_performance.name'), '#'
+          %th.club= link_to t('activerecord.attributes.race_performance.club'), '#'
+          %th.cat= link_to t('activerecord.attributes.race_performance.category'), '#'
+          %th.time= link_to t('activerecord.attributes.race_performance.time'), '#'
           %th.prizes
       %tbody
         = render :partial => 'race_performances/performance', :collection => @performances.completed
@@ -20,10 +24,10 @@
 
 - content_for :breadhead do
   = link_to "Races", races_url, :class => 'breadhead'
-  = t('separator')
+  = t('race_results_extension.separator')
   = link_to @instance.race.name, race_url(@instance.race), :class => 'breadhead'
   - if @club || @category
-    = t('separator')
+    = t('race_results_extension.separator')
     = link_to @instance.name, race_instance_url(@instance.race, @instance), :class => 'breadhead'
 
 - content_for :title do
