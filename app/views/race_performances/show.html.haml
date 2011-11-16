@@ -8,7 +8,7 @@
 
   .performance_chart
     .chart_holder
-      = link_to "loading", race_performance_path(@instance.race, @instance, @performance, :format => 'json'), :class => 'waiting'
+      = link_to "loading", race_performance_path(@instance.race, @instance, @performance, :format => 'json'), :class => 'waiting', :id => @performance.id
     .chart_control
 
 - content_for :breadhead do
