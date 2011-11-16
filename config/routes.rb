@@ -12,7 +12,7 @@ ActionController::Routing::Routes.draw do |map|
   map.race '/races/:slug', :controller => 'races', :action => 'show'
 
   map.race_instance '/races/:race_slug/:slug.:format', :controller => 'race_instances', :action => 'show'
-  map.race_performance '/races/:race_slug/:slug/p/:id', :controller => 'race_performances', :action => 'show'
+  map.race_performance '/races/:race_slug/:slug/p/:id.:format', :controller => 'race_performances', :action => 'show'
 
   map.race_splits '/races/:race_slug/:slug/splits.:format', :controller => 'race_instances', :action => 'splits'
   map.race_club '/races/:race_slug/:slug/club/:club.:format', :controller => 'race_instances', :action => 'show'

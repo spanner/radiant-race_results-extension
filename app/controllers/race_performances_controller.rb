@@ -4,7 +4,15 @@ class RacePerformancesController < SiteController
   before_filter :establish_context, :only => :show
 
   def show
-    expires_in 1.month, :private => false, :public => true
+    respond_to do |format|
+      format.html { 
+        expires_in 1.month, :private => false, :public => true
+        render
+      }
+      format.json {
+        render :json => @performance.neighbours(10).to_json(:vs => @performance)
+      }
+    end
   end
 
 private

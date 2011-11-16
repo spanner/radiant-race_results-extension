@@ -4,23 +4,26 @@
   - if @instance.has_results?
     = render :partial => 'summary', :locals => {:splitting => true}
     %table.splits
-      %thead
-        %tr
-          %th.pos
-            pos
-          %th.runner
-            name
-          - @instance.race.checkpoints.each do |cp|
-            %th.cpt
-              =cp.name
-          %th.time
-            Finish
+      = render :partial => 'splits_header'
       %tbody
         = render :partial => 'race_performances/splits', :collection => @performances.completed
-
   - else
     %p.noresults
       Not available yet.
+
+- content_for :chart do
+  .performance_chart
+    %ul.labels
+      - @instance.checkpoints.each do |cp|
+        %li= cp.name
+    .chart_holder
+      - if @club
+        = link_to "loading club data", race_club_path(@instance.race, @instance, @club, :format => 'json'), :class => 'waiting'
+      - elsif @category
+        = link_to "loading category data", race_category_path(@instance.race, @instance, @category, :format => 'json'), :class => 'waiting'
+      - else
+        = link_to "loading results data", race_instance_path(@instance.race, @instance, :format => 'json'), :class => 'waiting'
+    .chart_control
 
 - content_for :breadhead do
   = link_to "Races", races_url, :class => 'breadhead'
@@ -55,4 +58,6 @@
 
 
 = yield :results
+- if @club || @category
+  = yield :chart
 = yield :see_also

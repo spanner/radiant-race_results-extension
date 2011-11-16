@@ -1,0 +1,10 @@
+%thead
+  %tr
+    - if @instance.splits_available?
+      %th
+    %th.pos= link_to t('activerecord.attributes.race_performance.position'), '#'
+    %th.name= link_to t('activerecord.attributes.race_performance.name'), '#'
+    %th.club= link_to t('activerecord.attributes.race_performance.club'), '#'
+    %th.cat= link_to t('activerecord.attributes.race_performance.category'), '#'
+    %th.time= link_to t('activerecord.attributes.race_performance.time'), '#'
+    %th.prizes

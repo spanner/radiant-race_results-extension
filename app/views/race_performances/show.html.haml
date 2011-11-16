@@ -1,83 +1,16 @@
 = render :partial => 'races/standard_parts'
 
 - content_for :performance do
-  %table.ranking
-    %thead
-      %tr
-        %th
-        - %w{Pos Name Club Cat Time}.each do |h|
-          %th{:class => h.downcase}
-            =h
-        %th.prizes
+  %table.splits
+    = render :partial => 'race_instances/splits_header', :locals => {:splitting => true}
     %tbody
-      = render :partial => 'race_performances/splits', :object => @performance
+      = render :partial => 'race_performances/splits', :object => @performance, :locals => {:detail => true}
 
   .performance_chart
-    = link_to "loading", race_performance_url(@instance.race, @instance, @performance, :format => :js, :also => @performance.neighbours.map(&:id).join(',')), :class => 'waiting'
+    .chart_holder
+      = link_to "loading", race_performance_path(@instance.race, @instance, @performance, :format => 'json'), :class => 'waiting'
+    .chart_control
 
-  %table.splits
-    %thead
-      %tr
-        %th Checkpoint
-        %th Time
-        %th Interval
-        %th Position
-        %th This leg
-        %th Places gained
-    %tbody
-      - previous = nil
-      - previous_position = nil
-      - @race.checkpoints.each do |cp|
-        - cpt = @performance.time_at(cp)
-        - t = cpt.elapsed_time
-        %tr
-          %td 
-            = cpt.name
-          - if t && t.seconds > 0
-            %td 
-              = t
-            %td 
-              - if previous
-                = t - previous
-            %td 
-              = cpt.position
-            %td 
-              = cpt.leg_position
-            %td 
-              - if previous_position
-                - delta = previous_position - cpt.position
-                - if delta > 0
-                  = "+#{delta}"
-                - else
-                  = delta
-            - previous = t
-            - previous_position = cpt.position
-          - else
-            %td 
-              &mdash;
-            - previous = nil
-      %tr
-        %td
-          Finish
-        %td
-          = @performance.elapsed_time
-        %td
-          - if previous
-            = @performance.elapsed_time - previous
-        %td
-          = @performance.position
-        %td
-        %td
-          - if previous_position
-            - delta = previous_position - @performance.position 
-            - if delta > 0
-              = "+#{delta}"
-            - elsif delta == 0
-              &mdash;
-            - else
-              = delta
-          
-        
 - content_for :breadhead do
   = link_to "Races", races_url, :class => 'breadhead'
   = t('race_results_extension.separator')

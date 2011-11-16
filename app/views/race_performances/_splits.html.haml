@@ -1,3 +1,4 @@
+- detail ||= false
 - performance ||= splits
 - checkpoints = @checkpoints || @instance.checkpoints
 - splits = if @splits
@@ -27,9 +28,25 @@
       - else
         - previous = nil
         &mdash;
-  %td.time
-    = performance.elapsed_time
-    - if previous
-      %br
-        %span.note
-          = performance.elapsed_time - previous
+
+- if detail
+  - cpts = performance.checkpoint_times
+  
+  %tr
+    %th{:colspan => 2}
+      Position
+    - cpts.each do |cpt|
+      %td.pos
+        = cpt.position
+  %tr
+    %th{:colspan => 2}
+      Leg Position
+    - cpts.each do |cpt|
+      %td.pos
+        = cpt.leg_position
+  %tr
+    %th{:colspan => 2}
+      Gain
+    - cpts.each do |cpt|
+      %td.pos
+        = -cpt.gain

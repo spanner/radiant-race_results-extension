@@ -1,0 +1,20 @@
+en:
+  activerecord:
+    attributes:
+      race:
+        name: "Name"
+      race_performance:
+        position: Pos
+        name: Name
+        club: Club
+        category: Cat
+        time: Time
+        prizes: Prizes
+  helpers:
+    label:
+      race:  
+        name: "Race name"
+
+  race_results_extension:
+    separator: "&raquo;"
+    unattached: "Unattached"

@@ -4,10 +4,16 @@ class RaceInstancesController < SiteController
   before_filter :establish_context
 
   def show
-
+    expires_in 1.month, :private => false, :public => true
+    respond_to do |format|
+      format.html {}
+      format.csv {}
+      format.json { render :json => @performances.completed }
+    end
   end
 
   def splits
+    expires_in 1.month, :private => false, :public => true
     @checkpoints = @instance.checkpoints
     @splits = @instance.assembled_checkpoint_times
   end

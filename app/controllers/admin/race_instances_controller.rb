@@ -1,6 +1,6 @@
 class Admin::RaceInstancesController < Admin::ResourceController
   paginate_models
-  
+    
 protected
 
   def continue_url(options)

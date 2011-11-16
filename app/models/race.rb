@@ -17,6 +17,8 @@ class Race < ActiveRecord::Base
   belongs_to :map_asset, :class_name => 'Asset'
   accepts_nested_attributes_for :map_asset, :allow_destroy => true
 
+  before_save :ensure_finish_checkpoint
+  
   validates_presence_of :name, :slug
   validates_uniqueness_of :name, :slug
   validates_length_of :slug, :maximum => 100, :message => '%{count}-character limit'
@@ -62,6 +64,11 @@ class Race < ActiveRecord::Base
     checkpoints.at(checkpoints.index(cp) + 1) if checkpoints.include?(cp) and checkpoints.last != cp
   end
   
+protected
+
+  def ensure_finish_checkpoint
+    self.checkpoints << RaceCheckpoint.new(:name => "Finish") unless checkpoints.find_by_name('Finish')
+  end
 
 end
 

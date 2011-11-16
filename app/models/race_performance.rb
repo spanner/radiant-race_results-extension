@@ -1,3 +1,5 @@
+require 'enumerator'
+
 class RacePerformance < ActiveRecord::Base
   
   has_site if respond_to? :has_site
@@ -9,6 +11,7 @@ class RacePerformance < ActiveRecord::Base
   has_many :checkpoint_times, :class_name => 'RaceCheckpointTime', :dependent => :destroy
 
   delegate :name, :reader, :club, :to => :competitor
+  delegate :race, :to => :race_instance
   
   before_validation_on_create :times_from_checkpoints
   validates_presence_of :race_competitor_id, :race_instance_id
@@ -137,8 +140,8 @@ class RacePerformance < ActiveRecord::Base
     race_instance.performances.finishing_between(self.position.to_i - spread, self.position.to_i + spread)
   end
   
-  def neighbours
-    neighbourhood - [self]
+  def neighbours(spread=3)
+    neighbourhood(spread) - [self]
   end
   
   def time_in_seconds
@@ -167,6 +170,14 @@ class RacePerformance < ActiveRecord::Base
       hsh[cpt.race_checkpoint_id] = cpt.elapsed_time
     end
   end
+  
+  def split_times
+    @split_times ||= race_instance.checkpoints.map{ |cp| self.time_at(cp) }
+  end
+
+  def split_seconds
+    @split_seconds ||= split_times.map{ |st| st.time_in_seconds if st }
+  end
 
   def status
     RacePerformanceStatus.find(self.status_id)
@@ -181,7 +192,31 @@ class RacePerformance < ActiveRecord::Base
   def prized?
     true if prizes.any?
   end
-    
+  
+  def club_name
+    self.club ? self.club.name : 'unattached'
+  end
+  
+  def as_json(options={})
+    json = {
+      :id => self.id,
+      :pos => self.position,
+      :name => self.name,
+      :splits => self.split_seconds
+    }
+    leaders = race_instance.leading_checkpoint_times
+    json[:vs_leader] = self.split_seconds.map{|cpt| 
+      base = leaders.shift
+      cpt - base if cpt
+    }
+    medians = race_instance.median_checkpoint_times
+    json[:vs_median] = self.split_seconds.map{|cpt| 
+      base = medians.shift
+      cpt - base if cpt
+    }
+    json
+  end
+  
 protected
 
   def times_from_checkpoints
@@ -193,6 +228,15 @@ protected
   def recalculate_positions
     position(true)
     prizes(true)
+  end
+  
+  def record_finish_checkpoint_time
+    unless self.elapsed_time.blank?
+      cp = self.race.checkpoints.find_by_name('Finish')
+      cpt = self.checkpoint_times.find_or_create_by_race_checkpoint_id(cp.id)
+      cpt.elapsed_time = self.elapsed_time
+      cpt.save if cpt.changed?
+    end
   end
 
 end

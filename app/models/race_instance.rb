@@ -130,14 +130,27 @@ class RaceInstance < ActiveRecord::Base
     @performances_count ||= performances.count
   end
   
+  def leading_checkpoint_times
+    @leading ||= self.checkpoints.map{|cp| cp.leading_time(self) }
+  end
+
+  def median_checkpoint_times
+    @medians ||= self.checkpoints.map{|cp| cp.median_time(self) }
+  end
+
+  def as_json(options={})
+    json = {
+      :name => full_name,
+      :performances => performances.map(&:as_json)
+    }
+  end
+  
 protected
   
   def process_results_file
     if csv_data = read_results_file
       headers = csv_data.shift.map(&:to_s)
-      Rails.logger.warn "!!! headers: #{headers.inspect}"
       checkpoints = headers.map{|h| race.checkpoints.find_by_name(h.strip) }.compact
-      Rails.logger.warn "!!! checkpoints: #{checkpoints.inspect}"
       race_data = csv_data.map {|row| row.map {|cell| cell.to_s } }.map {|row| Hash[*headers.zip(row).flatten] } # build AoA and then hash the second level
       RaceInstance.transaction do
         performances.destroy_all
@@ -160,7 +173,7 @@ protected
             :elapsed_time => runner.delete('elapsed_time'),
             :status_id => status.id
           })
-        
+          
           checkpoints.each do |cp|
             value = runner[normalize(cp.name)]
             cpt = performance.checkpoint_times.create!(:race_checkpoint_id => cp.id, :elapsed_time => value) unless value.blank?

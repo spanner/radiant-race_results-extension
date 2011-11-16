@@ -5,22 +5,27 @@
     = render :partial => 'summary'
       
     %table.ranking
-      %thead
-        %tr
-          - if @instance.splits_available?
-            %th
-          %th.pos= link_to t('activerecord.attributes.race_performance.position'), '#'
-          %th.name= link_to t('activerecord.attributes.race_performance.name'), '#'
-          %th.club= link_to t('activerecord.attributes.race_performance.club'), '#'
-          %th.cat= link_to t('activerecord.attributes.race_performance.category'), '#'
-          %th.time= link_to t('activerecord.attributes.race_performance.time'), '#'
-          %th.prizes
+      = render :partial => 'results_header'
       %tbody
         = render :partial => 'race_performances/performance', :collection => @performances.completed
         = render :partial => 'race_performances/performance', :collection => @performances.incomplete, :locals => {:trclass => 'unfinished'}
   - else
     %p.noresults
       Not available yet.
+
+- content_for :chart do
+  .performance_chart
+    %ul.labels
+      - @instance.checkpoints.each do |cp|
+        %li= cp.name
+    .chart_holder
+      - if @club
+        = link_to "loading", race_club_path(@instance.race, @instance, @club, :format => 'json'), :class => 'waiting'
+      - elsif @category
+        = link_to "loading", race_category_path(@instance.race, @instance, @category, :format => 'json'), :class => 'waiting'
+      - else
+        = link_to "loading", race_instance_path(@instance.race, @instance, :format => 'json'), :class => 'waiting'
+    .chart_control
 
 - content_for :breadhead do
   = link_to "Races", races_url, :class => 'breadhead'

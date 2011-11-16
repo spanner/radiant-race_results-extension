@@ -6,7 +6,7 @@ $hover: #d1005d
 $dark: #4d4e53
 $mid: #8c8d8e
 $pale: #b3b3b3
-$palebg: #f1f0ee
+$palebg: #F2F0ED
 
 table.ranking
   border-collapse: collapse
@@ -31,7 +31,43 @@ table.ranking
     &.prizes
       color: $mid
       font-size: 75%
-      
+  th
+    a.sortable
+      padding-left: 10px
+      background: url('/images/race_results/sorts.png') no-repeat 0 5px
+      &.up
+        background-position: 0 -11px
+      &.down
+        background-position: 0 -27px
+      &:hover
+        color: #f06
+        background-position: 0 -59px
+      &.up:hover
+        background-position: 0 -43px
+      &:active, &.up:active
+        background-position: 0 -75px
+    
+div.performance_chart
+  width: 800px
+  height: 500px
+  margin: 20px 0
+  overflow: hidden
+  ul
+    display: none
+  a.waiting
+    display: block
+    margin: 180px 380px
+
+div.tooltip
+  position: absolute
+  display: none
+  border: 1px solid #fdd
+  padding: 2px
+  background-color: white
+  opacity: 0.90
+  border: 1px solid $pale
+  z-index: 1000
+
 table.splits
   border-collapse: collapse
   border: 0

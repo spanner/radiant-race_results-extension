@@ -1,0 +1,9 @@
+%thead
+  %tr
+    %th.pos
+      pos
+    %th.runner
+      name
+    - @instance.race.checkpoints.each do |cp|
+      %th.cpt
+        =cp.name
