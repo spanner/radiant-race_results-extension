@@ -130,11 +130,20 @@ class RaceInstance < ActiveRecord::Base
     @performances_count ||= performances.count
   end
   
-  def leading_checkpoint_times
-    @leading ||= self.checkpoints.map{|cp| cp.leading_time(self) }
+  def fastest_checkpoint_times
+    @leading ||= self.checkpoints.map{|cp| cp.fastest_time(self) }
+  end
+
+  def fastest_checkpoint_legs
+    @fastest_legs ||= self.checkpoints.map{|cp| cp.fastest_leg(self) }
+  end
+
+  def median_checkpoint_legs
+    @median_legs ||= self.checkpoints.map{|cp| cp.median_leg(self) }
   end
 
   def median_checkpoint_times
+    carry = 0
     @medians ||= self.checkpoints.map{|cp| cp.median_time(self) }
   end
 

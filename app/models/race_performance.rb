@@ -203,25 +203,28 @@ class RacePerformance < ActiveRecord::Base
       :pos => self.position,
       :name => self.name,
     }
+    splits = []
     baseline = case options[:vs]
     when 'median'
       race_instance.median_checkpoint_times
     when 'leader'
       race_instance.winning_performance.split_seconds
     when RacePerformance
-      Rails.logger.warn "!!  getting split_seconds for vs: #{options[:vs].name}: #{options[:vs].split_seconds.join(', ')}"
       options[:vs].split_seconds.dup
     else
       nil
     end
     if baseline
-      json[:splits] = self.split_seconds.map{ |cpt| 
+      splits = self.split_seconds.map{ |cpt| 
         base = baseline.shift # we need to step through the baseline even if this cp is missing
         base - cpt if cpt && base
       }
     else
-      json[:splits] = self.split_seconds
+      splits = self.split_seconds
     end
+    intervals = race_instance.fastest_checkpoint_legs
+    carry = 0
+    json[:splits] = splits.map{|t| [carry += intervals.shift, t]}
     json
   end
   

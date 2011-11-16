@@ -6,9 +6,15 @@
     %tbody
       = render :partial => 'race_performances/splits', :object => @performance, :locals => {:detail => true}
 
+- content_for :chart do
+  %h3
+    Nearby finishers
   .performance_chart
+    %ul.labels
+      - @instance.checkpoints.each do |cp|
+        %li= cp.name
     .chart_holder
-      = link_to "loading", race_performance_path(@instance.race, @instance, @performance, :format => 'json'), :class => 'waiting', :id => @performance.id
+      = link_to "loading chart data", race_performance_path(@instance.race, @instance, @performance, :format => 'json'), :class => 'waiting', :id => @performance.id
     .chart_control
 
 - content_for :breadhead do
@@ -36,4 +42,5 @@
         = link_to "splits", race_splits_url(@race, @instance)
 
 = yield :performance
+= yield :chart
 = yield :see_also

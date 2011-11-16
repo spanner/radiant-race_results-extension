@@ -31,14 +31,18 @@ String.prototype.toSeconds = function() {
 
   var timeFormat = function(value, axis) {
     if (value == 0) return '0';
+    var prefix = '';
+    if (value < 0) {
+      value = Math.abs(value);
+      prefix = '-';
+    }
     var h = Math.floor(value/3600);
     var m = Math.floor((value % 3600)/60);
     if ( m < 10) m = "0" + m;
     var s = value % 60;
     if ( s < 10) s = "0" + s;
-    var tc = [h,m].join(":");
-    if (s != "00") tc = tc + ":" + s;
-    return tc;
+    var tc = [h,m,s].join(":");
+    return prefix + tc;
   };
   
   function ResultsRow(tr) {
@@ -142,35 +146,8 @@ String.prototype.toSeconds = function() {
       var href = waiter.attr('href');
       var list = self.find('ul.labels').eq(0);
       var ticks = [];
-      list.find('li').each(function (i, el) { ticks.push([i+1, $(el).text()]); });
+      list.find('li').each(function (i, el) { ticks.push($(el).text()); });
       list.hide();
-      var plot_options = {
-        series: {
-          lines: { 
-            show: true
-          },
-          shadowSize: 2,
-          points: {show: true}
-        },
-        xaxis: {
-          show: true, 
-          ticks: ticks
-        }, 
-        yaxis: {
-          show: true,
-          tickSize: 1800,
-          tickFormatter: timeFormat
-        },
-        grid: {
-          show: true,
-          borderWidth: 0,
-          hoverable: true, 
-          clickable: true 
-        },
-        legend: {
-          show: false
-        }
-      };
 
       self.qtip({
          prerender: true,
@@ -190,14 +167,42 @@ String.prototype.toSeconds = function() {
       $.getJSON(href, function (data) {
         var length = data[0].length;
         var series = [];
+        var markers = [];
+        $.each(data[0]['splits'], function () {
+          markers.push([this[0], ticks.shift()]);
+        });
+        
+        var plot_options = {
+          series: {
+            lines: { 
+              show: true
+            },
+            shadowSize: 2,
+            points: {show: true}
+          },
+          xaxis: {
+            show: true, 
+            ticks: markers
+          }, 
+          yaxis: {
+            show: true,
+            tickFormatter: timeFormat
+          },
+          grid: {
+            show: true,
+            borderWidth: 0,
+            hoverable: true, 
+            clickable: true 
+          },
+          legend: {
+            show: false
+          }
+        };
+        
         $.each(data, function () {
-          var coordinates = [[0,0]];
-          var i = 1;
-          $.each(this['splits'], function () {
-            coordinates.push([i++, this]);
-          });
+          points = this['splits'].unshift([0,0]);
           series.push({
-            data: coordinates,
+            data: this['splits'],
             label: this['name']
           });
         });
@@ -215,18 +220,12 @@ String.prototype.toSeconds = function() {
           }
           var previousPoint = qtip.cache.point;
           if (qtip.cache.point != item.dataIndex + item.series.label) {
-            console.log("plothover", item);
             qtip.cache.point = item.dataIndex + item.series.label;
             qtip.elements.tooltip.stop(1, 1);
             var content = item.series.label + ": " + timeFormat(item.datapoint[1]);
+            qtip.set();
             qtip.set('content.text', content);
             qtip.show(pos);
-          }
-        });
-
-        $(self).bind("plotclick", function (event, pos, item) {
-          if(item) {
-            self.redrawAround(item.series);
           }
         });
       });
@@ -244,13 +243,3 @@ String.prototype.toSeconds = function() {
   };
   
 })(jQuery);
-
-
-function showTooltip(x, y, contents) {
-    $('<div id="tip" class="tooltip">' + contents + '</div>').css( {
-        display: 'block',
-        top: y + 5,
-        left: x + 5
-    }).appendTo("body").fadeIn(200);
-}
-

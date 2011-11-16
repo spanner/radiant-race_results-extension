@@ -16,7 +16,9 @@ class RaceCheckpointTime < ActiveRecord::Base
   before_save :calculate_interval   # position would be nice too but we may not have imported all the data at this stage
   
   named_scope :with_context, :include => [:race_performance, :race_checkpoint]
-  named_scope :ordered, { :order => 'elapsed_time' }
+  named_scope :by_time, { :order => 'race_checkpoint_times.elapsed_time' }
+  named_scope :by_interval, { :order => 'race_checkpoint_times.interval' }
+
 
   named_scope :single, lambda { |offset| 
     {
@@ -106,6 +108,10 @@ class RaceCheckpointTime < ActiveRecord::Base
     end
   end
   
+  def interval_in_seconds
+    read_attribute(:interval)
+  end
+  
   def previous
     performance.time_at(checkpoint.previous) if checkpoint.previous
   end
@@ -125,9 +131,10 @@ class RaceCheckpointTime < ActiveRecord::Base
 private
 
   def calculate_interval
-    if previous
-      write_attribute(:interval, ((elapsed_time - previous.elapsed_time) || 0).seconds)
-    end
+    previous_time = previous.elapsed_time if previous
+    previous_time ||= 0
+    write_attribute(:interval, (elapsed_time - previous_time).seconds)
+    save if changed?
   end
 
 end

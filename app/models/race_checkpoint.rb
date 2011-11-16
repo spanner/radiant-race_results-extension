@@ -27,14 +27,27 @@ class RaceCheckpoint < ActiveRecord::Base
     find_by_name(name.gsub(/\s+/, "_").downcase)
   end
   
-  def leading_time(instance)
+  def fastest_time(instance)
     self.times.in(instance).first.time_in_seconds
+  end
+
+  def fastest_leg(instance)
+    self.times.in(instance).by_interval.first.interval_in_seconds
   end
 
   def median_time(instance)
     count = self.times.in(instance).count
     if count && count !=0
-      @median = self.times.in(instance).ordered.single(count/2).first.time_in_seconds
+      @median = self.times.in(instance).by_time.single(count/2).first.time_in_seconds
+    else
+      0
+    end
+  end
+
+  def median_leg(instance)
+    count = self.times.in(instance).count
+    if count && count !=0
+      @median = self.times.in(instance).by_interval.single(count/2).first.interval_in_seconds
     else
       0
     end
