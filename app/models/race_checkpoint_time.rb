@@ -12,13 +12,12 @@ class RaceCheckpointTime < ActiveRecord::Base
   alias :performance :race_performance
   alias :checkpoint :race_checkpoint
   
-  default_scope :include => [:race_performance, :race_checkpoint]
+  # default_scope :include => [:race_performance, :race_checkpoint]
   before_save :calculate_interval   # position would be nice too but we may not have imported all the data at this stage
   
   named_scope :with_context, :include => [:race_performance, :race_checkpoint]
   named_scope :by_time, { :order => 'race_checkpoint_times.elapsed_time' }
   named_scope :by_interval, { :order => 'race_checkpoint_times.interval' }
-
 
   named_scope :single, lambda { |offset| 
     {
@@ -52,6 +51,10 @@ class RaceCheckpointTime < ActiveRecord::Base
     }
   }
   
+  named_scope :other_than_finish, {
+    :joins => "INNER JOIN race_checkpoints as checkpoints ON race_checkpoint_times.race_checkpoint_id = checkpoints.id",  
+    :conditions => ["NOT checkpoints.name = ?", "Finish"]
+  }
   
   def to_s
     time = read_attribute(:elapsed_time)

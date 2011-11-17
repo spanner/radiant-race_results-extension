@@ -77,7 +77,7 @@ class RaceInstance < ActiveRecord::Base
   end
   
   def splits_available?
-    RaceCheckpointTime.in(self).any?
+    RaceCheckpointTime.in(self).other_than_finish.any?
   end
   
   def assembled_checkpoint_times
